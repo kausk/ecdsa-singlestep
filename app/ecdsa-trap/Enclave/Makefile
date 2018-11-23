@@ -42,6 +42,11 @@ UNTRUSTED_OBJECTS = $(ENCLAVE)_u.o
 TRUSTED_CODE      = $(ENCLAVE)_t.h $(ENCLAVE)_t.c
 UNTRUSTED_CODE    = $(ENCLAVE)_u.h $(ENCLAVE)_u.c
 
+
+
+## SSL
+SGX_SDK_INC = /home/ksk/intel-sgx-ssl/Linux/package/include/
+
 #.SILENT:
 all: $(OUTPUT_T) $(OUTPUT_U)
 
@@ -79,7 +84,7 @@ asm.s: build_asm.py
 
 edger: $(ENCLAVE).edl
 	echo "$(INDENT)[GEN]" $(EDGER) $(ENCLAVE_EDL)
-	$(EDGER) $(ENCLAVE_EDL)
+	$(EDGER) $(ENCLAVE_EDL) --search-path $(SGX_SDK_INC)
 	
 .PHONY: force_check
 force_check:
