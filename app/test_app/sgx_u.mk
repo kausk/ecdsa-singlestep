@@ -159,11 +159,8 @@ TestApp: $(UNTRUSTED_DIR)/TestEnclave_u.o $(App_Cpp_Objects) libsgx-step.a
 	$(VCXX) $^ $(OBJECTS) $(LDFLAGS) -o $@ $(App_Link_Flags) 
 	@echo "LINK =>  $@"
 
-$(BUILDDIRS):
-	echo "build $(INDENT)[===] $(@:build-%=%) [===]"
-	$(info building $(MAKE) -C $(@:build-%=%) INDENT+="$(INDENT_STEP)" M32=$(M32) curr-dir=$(curr-dir)/$(@:build-%=%))
-	$(VCC) -C $(@:build-%=%) curr-dir=$(curr-dir)/$(@:build-%=%)
-
+libsgx-step.a:
+	$(MAKE) $(LIBSGXSTEP)/Makefile
 
 .PHONY: clean
 
