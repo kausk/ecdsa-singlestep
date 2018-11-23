@@ -155,7 +155,7 @@ $(UNTRUSTED_DIR)/%.o: $(UNTRUSTED_DIR)/%.cpp
 	$(VCXX) $(App_Cpp_Flags) -c $(LDFLAGS) $< -o $@
 	@echo "CXX  <=  $<"
 
-TestApp: $(UNTRUSTED_DIR)/TestEnclave_u.o $(App_Cpp_Objects) $(BUILDDIRS)
+TestApp: $(UNTRUSTED_DIR)/TestEnclave_u.o $(App_Cpp_Objects) libsgx-step.a
 	$(VCXX) $^ $(OBJECTS) $(LDFLAGS) -o $@ $(App_Link_Flags) 
 	@echo "LINK =>  $@"
 
