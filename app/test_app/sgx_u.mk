@@ -54,6 +54,8 @@ LDFLAGS             += -lsgx-step -lsgx_urts \
                        -L$(LIBSGXSTEP_DIR)/linux-sgx/psw/urts/linux
 SOURCES              = $(shell ls *.c)
 OBJECTS              = $(SOURCES:.c=.o)
+BUILDDIRS            = $(SUBDIRS:%=build-%)
+
 $(info LDFLAGS are $(LDFLAGS))
 
 ######## SGX SDK Settings ########
@@ -153,7 +155,7 @@ $(UNTRUSTED_DIR)/%.o: $(UNTRUSTED_DIR)/%.cpp
 	$(VCXX) $(App_Cpp_Flags) -c $(LDFLAGS) $< -o $@
 	@echo "CXX  <=  $<"
 
-TestApp: $(UNTRUSTED_DIR)/TestEnclave_u.o $(App_Cpp_Objects)
+TestApp: $(UNTRUSTED_DIR)/TestEnclave_u.o $(App_Cpp_Objects) $(BUILDDIRS)
 	$(VCXX) $^ $(OBJECTS) $(LDFLAGS) -o $@ $(App_Link_Flags) 
 	@echo "LINK =>  $@"
 

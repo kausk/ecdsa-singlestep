@@ -35,10 +35,11 @@ SOURCES              = $(shell ls *.c)
 OBJECTS              = $(SOURCES:.c=.o)
 OUTPUT               = app
 
+$(info sources are $(SOURCES))
 BUILDDIRS            = $(SUBDIRS:%=build-%)
 CLEANDIRS            = $(SUBDIRS:%=clean-%)
 
-
+$(info build dirs are $(SUBDIRS:%=build-%))
 .SILENT:
 all: $(OUTPUT)
 	
@@ -62,7 +63,8 @@ clean: $(CLEANDIRS)
 	rm -f $(OBJECTS) $(OUTPUT)
 
 $(BUILDDIRS):
-	echo "$(INDENT)[===] $(@:build-%=%) [===]"
+	echo "build $(INDENT)[===] $(@:build-%=%) [===]"
+	$(info building $(MAKE) -C $(@:build-%=%) INDENT+="$(INDENT_STEP)" M32=$(M32) curr-dir=$(curr-dir)/$(@:build-%=%))
 	$(MAKE) -C $(@:build-%=%) INDENT+="$(INDENT_STEP)" M32=$(M32) curr-dir=$(curr-dir)/$(@:build-%=%)
 
 $(CLEANDIRS):
