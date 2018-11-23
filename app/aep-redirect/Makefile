@@ -47,8 +47,8 @@ run: clean all
 	sudo $(URTS_LD_LIBRARY_PATH) ./app
 
 $(OUTPUT): $(BUILDDIRS) $(OBJECTS)
-	$(info output objects)
-	$(info line 1 $(OBJECTS))
+	$(info AAA output objects)
+	$(info line 1 $(OUTPUT): $(BUILDDIRS) $(OBJECTS))
 	$(info line 2 $(LD) $(OBJECTS) $(LDFLAGS) -o $(OUTPUT))
 	echo "$(INDENT)[LD]" $(OBJECTS) $(LIBS) -o $(OUTPUT) 
 	$(LD) $(OBJECTS) $(LDFLAGS) -o $(OUTPUT) 
@@ -67,7 +67,7 @@ clean: $(CLEANDIRS)
 
 $(BUILDDIRS):
 	echo "build $(INDENT)[===] $(@:build-%=%) [===]"
-	$(info building $(MAKE) -C $(@:build-%=%) INDENT+="$(INDENT_STEP)" M32=$(M32) curr-dir=$(curr-dir)/$(@:build-%=%))
+	$(info BBB building $(MAKE) -C $(@:build-%=%) INDENT+="$(INDENT_STEP)" M32=$(M32) curr-dir=$(curr-dir)/$(@:build-%=%))
 	$(MAKE) -C $(@:build-%=%) INDENT+="$(INDENT_STEP)" M32=$(M32) curr-dir=$(curr-dir)/$(@:build-%=%)
 
 $(CLEANDIRS):
