@@ -290,8 +290,9 @@ int main(int argc, char *argv[])
     BIGNUM* result;
     result = (BIGNUM *) malloc(sizeof(BIGNUM));
     sgx_status_t status = sign_single(global_eid, result, random_buffer, 0); // changed
+    status = t_sgxssl_call_apis();
     if (status != SGX_SUCCESS) {
-        printf("Call to generate_key_and_sign has failed.\n");
+        printf("Call to tests have failed.\n");
         return 1;    //Test failed
     }
     printf("BN: ulong %lu top %d, dmax %d, neg %d", result->d, result->top, result->dmax, result->neg);
