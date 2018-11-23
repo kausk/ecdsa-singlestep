@@ -289,8 +289,8 @@ int main(int argc, char *argv[])
 
     BIGNUM* result;
     result = (BIGNUM *) malloc(sizeof(BIGNUM));
-    sgx_status_t status = sign_single(global_eid, result, random_buffer, 0); // changed
-    status = t_sgxssl_call_apis();
+    sgx_status_t status = sign_single(global_eid, random_buffer, 0); // changed
+    status = t_sgxssl_call_apis(global_eid);
     if (status != SGX_SUCCESS) {
         printf("Call to tests have failed.\n");
         return 1;    //Test failed

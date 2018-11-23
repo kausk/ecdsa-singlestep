@@ -15,9 +15,10 @@
 extern "C" {
 #endif
 
-BIGNUM sign_single(unsigned char* message, int len);
-void generate_key_and_sign(void);
-void new_thread_func(void);
+void sign_single(unsigned char* message, int len);
+void generate_key_and_sign();
+void new_thread_func();
+void t_sgxssl_call_apis();
 
 sgx_status_t SGX_CDECL uprint(const char* str);
 sgx_status_t SGX_CDECL usgx_exit(int reason);
