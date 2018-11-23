@@ -41,6 +41,10 @@
 #include <pthread.h>
 #include <openssl/bn.h>
 
+// Signal information
+#include <sys/mman.h>
+#include <signal.h>
+
 # define MAX_PATH FILENAME_MAX
 
 
