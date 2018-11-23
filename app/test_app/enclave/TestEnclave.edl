@@ -51,6 +51,6 @@ from "sgx_tsgxssl.edl" import *;
         public void sign_single([user_check] unsigned char* message, int len);
         public void generate_key_and_sign();
         public void new_thread_func();
-        public void t_sgxssl_call_apis();
+	public void t_sgxssl_call_apis();        
     };
 };

@@ -336,7 +336,8 @@ void generate_key_and_sign()
 
 void t_sgxssl_call_apis()
 {
-    int ret = 0;
+  /*
+  int ret = 0;
     
     printf("Start tests\n");
     
@@ -424,6 +425,6 @@ void t_sgxssl_call_apis()
     	exit(ret);
     }
 	printf("test threads_test completed\n");
-	
+  */
 }
 
