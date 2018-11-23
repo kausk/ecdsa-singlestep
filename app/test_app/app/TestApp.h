@@ -37,18 +37,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <openssl/bn.h>
-#  define BN_ULONG        unsigned long
-typedef struct bignum_st BIGNUM;
-
- struct bignum_st
-        {
-        BN_ULONG *d;    /* Pointer to an array of 'BN_BITS2' bit chunks. */
-        int top;        /* Index of last used d +1. */
-        /* The next are internal book keeping for bn_expand. */
-        int dmax;       /* Size of the d array. */
-        int neg;        /* one if the number is negative */
-        int flags;
-        };
 #include "sgx_error.h"       /* sgx_status_t */
 #include "sgx_eid.h"     /* sgx_enclave_id_t */
 
