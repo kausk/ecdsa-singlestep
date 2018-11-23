@@ -265,12 +265,36 @@ int ucreate_thread()
 }
 
 
+
+/* app cb */
+void *a_pt;
+int fault_fired = 0, aep_fired = 0;
+
+void aep_cb_func(void)
+{
+    uint64_t erip = edbgrd_erip() - (uint64_t) get_enclave_base();
+    info("Hello world from AEP callback with erip=%#llx! Resuming enclave..", erip); 
+
+    aep_fired++;
+}
+
+void fault_handler(int signal)
+{
+	info("Caught fault %d! Restoring access rights..", signal);
+    ASSERT(!mprotect(a_pt, 4096, PROT_READ | PROT_WRITE));
+    print_pte_adrs(a_pt);
+    fault_fired++;
+}
+
+
 /* Application entry */
 int main(int argc, char *argv[])
 {
     (void)(argc);
     (void)(argv);
-
+    register_aep_cb(aep_cb_func);
+    register_enclave_info();
+    print_enclave_info();
     /* Changing dir to where the executable is.*/
     char absolutePath[MAX_PATH];
     char *ptr = NULL;
@@ -298,6 +322,5 @@ int main(int argc, char *argv[])
         return 1;    //Test failed
     }
     printf("BN: ulong %lu top %d, dmax %d, neg %d", result->d, result->top, result->dmax, result->neg);
-    print_enclave_info();
     return 0;
 }
