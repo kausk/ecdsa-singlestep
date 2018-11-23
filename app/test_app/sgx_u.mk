@@ -29,6 +29,30 @@
 #
 #
 
+### SGX-Step #####################
+LIBSGXSTEP_DIR       = ../..
+LIBSGXSTEP           = $(LIBSGXSTEP_DIR)/libsgxstep
+URTS_LIB_PATH        = $(LIBSGXSTEP_DIR)/linux-sgx/psw/urts/linux
+ifeq ($(SGX_SDK),)
+    SGX_SDK          = /opt/intel/sgxsdk
+endif
+export SGX_SDK
+ifneq ($(SGX_SDK), /opt/intel/sgxsdk)
+    URTS_LD_LIBRARY_PATH = LD_LIBRARY_PATH=$(LIBSGXSTEP_DIR)/linux-sgx/psw/urts/linux
+endif
+
+ENCLAVE              = Enclave
+SUBDIRS              = $(ENCLAVE) $(LIBSGXSTEP)
+LIB_SUFX = 64
+
+CC                   = gcc
+AS                   = gcc
+LD                   = gcc
+
+LDFLAGS             += -lsgx-step -lencl_proxy -lsgx_urts \
+                       -lsgx_uae_service -pthread $(SUBDIRS:%=-L %) -L$(SGX_SDK)/lib$(LIB_SUFX)/ \
+                       -L$(LIBSGXSTEP_DIR)/linux-sgx/psw/urts/linux
+
 
 
 ######## SGX SDK Settings ########
@@ -59,6 +83,8 @@ else
 	endif
 endif
 
+
+#################################
 ifeq ($(DEBUG), 1)
 ifeq ($(SGX_PRERELEASE), 1)
 $(error Cannot set DEBUG and SGX_PRERELEASE at the same time!!)
@@ -75,13 +101,14 @@ else
 endif
 
 
+
 ######## App Settings ########
 
 
 App_Cpp_Files := $(UNTRUSTED_DIR)/TestApp.cpp
 App_Cpp_Objects := $(App_Cpp_Files:.cpp=.o)
 
-App_Include_Paths := -I$(UNTRUSTED_DIR) -I$(SGX_SDK_INC)
+App_Include_Paths := -I$(UNTRUSTED_DIR) -I$(SGX_SDK_INC) -I$(LIBSGXSTEP_DIR)
 
 App_C_Flags := $(SGX_COMMON_CFLAGS) -fpic -fpie -fstack-protector -Wformat -Wformat-security -Wno-attributes $(App_Include_Paths)
 App_Cpp_Flags := $(App_C_Flags) -std=c++11
@@ -104,27 +131,26 @@ App_Link_Flags := $(SGX_COMMON_CFLAGS) $(Security_Link_Flags) $(SGX_SHARED_LIB_F
 
 all: TestApp
 
+run: clean all
+	sudo $(URTS_LD_LIBRARY_PATH) ./app
+
 test: all
 	@$(CURDIR)/TestApp
 	@echo "RUN  =>  TestApp [$(SGX_MODE)|$(SGX_ARCH), OK]"
 
 ######## App Objects ########
-$(info cding into untrusted $(UNTRUSTED_DIR))
 $(UNTRUSTED_DIR)/TestEnclave_u.c: $(SGX_EDGER8R) enclave/TestEnclave.edl
 	@cd $(UNTRUSTED_DIR) && $(SGX_EDGER8R) --untrusted ../enclave/TestEnclave.edl --search-path $(PACKAGE_INC) --search-path $(SGX_SDK_INC)
 	@echo "GEN  =>  $@"
 
 $(UNTRUSTED_DIR)/TestEnclave_u.o: $(UNTRUSTED_DIR)/TestEnclave_u.c
-	$(VCC) $(App_C_Flags) -c $< -o $@
+	$(VCC) $(App_C_Flags) -c $(LDFLAGS) $< -o $@
 	@echo "CC   <=  $<"
 
 $(UNTRUSTED_DIR)/%.o: $(UNTRUSTED_DIR)/%.cpp
 	$(VCXX) $(App_Cpp_Flags) -c $< -o $@
 	@echo "CXX  <=  $<"
 
-$(info app link flags are $(App_Link_Flags))
-$(info openssl path is $(OPENSSL_LIBRARY_PATH))
-$(info ssl link path is $(SgxSSL_Link_Libraries))
 TestApp: $(UNTRUSTED_DIR)/TestEnclave_u.o $(App_Cpp_Objects)
 	$(VCXX) $^ -o $@ $(App_Link_Flags)
 	@echo "LINK =>  $@"
