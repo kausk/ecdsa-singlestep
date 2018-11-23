@@ -30,7 +30,7 @@
 #
 
 ### SGX-Step #####################
-LIBSGXSTEP_DIR       = ../..
+LIBSGXSTEP_DIR       = ../../
 LIBSGXSTEP           = $(LIBSGXSTEP_DIR)/libsgxstep
 URTS_LIB_PATH        = $(LIBSGXSTEP_DIR)/linux-sgx/psw/urts/linux
 ifeq ($(SGX_SDK),)
@@ -49,11 +49,11 @@ CC                   = gcc
 AS                   = gcc
 LD                   = gcc
 
-LDFLAGS             += -lsgx-step -lencl_proxy -lsgx_urts \
-                       -lsgx_uae_service -pthread $(SUBDIRS:%=-L %) -L$(SGX_SDK)/lib$(LIB_SUFX)/ \
+LDFLAGS             += -lsgx-step -lsgx_urts \
+                       -lsgx_uae_service -pthread $(SUBDIRS:%=-L%) -L$(SGX_SDK)/lib$(LIB_SUFX)/ \
                        -L$(LIBSGXSTEP_DIR)/linux-sgx/psw/urts/linux
 
-
+$(info LDFLAGS are $(LDFLAGS))
 
 ######## SGX SDK Settings ########
 SGX_MODE ?= HW
@@ -107,7 +107,7 @@ endif
 
 App_Cpp_Files := $(UNTRUSTED_DIR)/TestApp.cpp
 App_Cpp_Objects := $(App_Cpp_Files:.cpp=.o)
-
+$(info libsgxdir $(LIBSGXSTEP_DIR))
 App_Include_Paths := -I$(UNTRUSTED_DIR) -I$(SGX_SDK_INC) -I$(LIBSGXSTEP_DIR)
 
 App_C_Flags := $(SGX_COMMON_CFLAGS) -fpic -fpie -fstack-protector -Wformat -Wformat-security -Wno-attributes $(App_Include_Paths)
@@ -149,11 +149,11 @@ $(UNTRUSTED_DIR)/TestEnclave_u.o: $(UNTRUSTED_DIR)/TestEnclave_u.c
 	@echo "CC   <=  $<"
 
 $(UNTRUSTED_DIR)/%.o: $(UNTRUSTED_DIR)/%.cpp
-	$(VCXX) $(App_Cpp_Flags) -c $< -o $@
+	$(VCXX) $(App_Cpp_Flags) -c $(LDFLAGS) $< -o $@
 	@echo "CXX  <=  $<"
 
 TestApp: $(UNTRUSTED_DIR)/TestEnclave_u.o $(App_Cpp_Objects)
-	$(VCXX) $^ -o $@ $(App_Link_Flags) $(LDFLAGS)
+	$(VCXX) $^ $(LDFLAGS) -o $@ $(App_Link_Flags) 
 	@echo "LINK =>  $@"
 
 
