@@ -296,9 +296,11 @@ int main(int argc, char *argv[])
 {
     (void)(argc);
     (void)(argv);
+    /*
     register_aep_cb(aep_cb_func);
     register_enclave_info();
     print_enclave_info();
+    */
     /* Changing dir to where the executable is.*/
     char absolutePath[MAX_PATH];
     char *ptr = NULL;
