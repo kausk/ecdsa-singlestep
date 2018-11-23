@@ -46,23 +46,26 @@ unsigned long hash(unsigned char *str) {
 }
 
 int random_int(int start, int end) {
-
+    return 0;
 }
 
 int modular_inv(int value, int modulus) {
-
+    return 0;
 }
 
 int F(int v) {
-
+    return 0;
 }
 
 int mul(int v) {
+    return 0;
 
 }
 
 int mod(int v, int modulus) {
-
+    return 0;
 }
 
-int add(int v, int modul)
+int add(int v, int modul) {
+    return 0;
+}
