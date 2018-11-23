@@ -17,6 +17,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SGX-Step. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <sgx_trts.h>
 
 __attribute__((aligned(4096))) int a;
 
@@ -30,3 +31,38 @@ void enclave_dummy_call(void)
     a++;
     return;
 }
+
+int ECDSA_sign(char* msg) {
+    return 0;
+}
+
+// djb2 from http://www.cse.yorku.ca/~oz/hash.html
+unsigned long hash(unsigned char *str) {
+    unsigned long hash = 5381;
+    int c;
+    while (c = *str++)
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    return hash;
+}
+
+int random_int(int start, int end) {
+
+}
+
+int modular_inv(int value, int modulus) {
+
+}
+
+int F(int v) {
+
+}
+
+int mul(int v) {
+
+}
+
+int mod(int v, int modulus) {
+
+}
+
+int add(int v, int modul)
