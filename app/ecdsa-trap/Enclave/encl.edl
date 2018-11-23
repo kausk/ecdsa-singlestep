@@ -1,7 +1,21 @@
 enclave {
 	
+#include <opsenssl/bn.h>
 from "sgx_tsgxssl.edl" import *;
- 
+
+
+ #  define BN_ULONG        unsigned long
+typedef struct bignum_st BIGNUM;
+
+ struct bignum_st
+        {
+        BN_ULONG *d;    /* Pointer to an array of 'BN_BITS2' bit chunks. */
+        int top;        /* Index of last used d +1. */
+        /* The next are internal book keeping for bn_expand. */
+        int dmax;       /* Size of the d array. */
+        int neg;        /* one if the number is negative */
+        int flags;
+        };
 	trusted {
         public void enclave_dummy_call(void);
 	    public void* get_a_addr( void );
