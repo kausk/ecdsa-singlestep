@@ -109,7 +109,7 @@ test: all
 	@echo "RUN  =>  TestApp [$(SGX_MODE)|$(SGX_ARCH), OK]"
 
 ######## App Objects ########
-
+$(info cding into untrusted $(UNTRUSTED_DIR))
 $(UNTRUSTED_DIR)/TestEnclave_u.c: $(SGX_EDGER8R) enclave/TestEnclave.edl
 	@cd $(UNTRUSTED_DIR) && $(SGX_EDGER8R) --untrusted ../enclave/TestEnclave.edl --search-path $(PACKAGE_INC) --search-path $(SGX_SDK_INC)
 	@echo "GEN  =>  $@"
@@ -122,6 +122,9 @@ $(UNTRUSTED_DIR)/%.o: $(UNTRUSTED_DIR)/%.cpp
 	$(VCXX) $(App_Cpp_Flags) -c $< -o $@
 	@echo "CXX  <=  $<"
 
+$(info app link flags are $(App_Link_Flags))
+$(info openssl path is $(OPENSSL_LIBRARY_PATH))
+$(info ssl link path is $(SgxSSL_Link_Libraries))
 TestApp: $(UNTRUSTED_DIR)/TestEnclave_u.o $(App_Cpp_Objects)
 	$(VCXX) $^ -o $@ $(App_Link_Flags)
 	@echo "LINK =>  $@"

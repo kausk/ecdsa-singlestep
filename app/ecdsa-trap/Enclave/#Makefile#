@@ -4,16 +4,11 @@ SGXSSL_INC = /opt/intel/sgxssl/include/
 include ../../buildenv.mk
 # Added to build with SgxSSL libraries
 TSETJMP_LIB := -lsgx_tsetjmp
-OPENSSL_LIBRARY_PATH := $(PACKAGE_LIB)
+OPENSSL_LIBRARY_PATH := $(PACKAGE_LIB)/
 SGXSSL_Library_Name := sgx_tsgxssl
 OpenSSL_Crypto_Library_Name := sgx_tsgxssl_crypto
-
-#SgxSSL_Link_Libraries := -L$(OPENSSL_LIBRARY_PATH) -Wl,--whole-archive -l$(SGXSSL_Library_Name) \ 
-#						 -Wl,--no-whole-archive \
-#						 -l$(OpenSSL_Crypto_Library_Name)
-
 SgxSSL_Link_Libraries := -L$(OPENSSL_LIBRARY_PATH) -Wl,--whole-archive -l$(SGXSSL_Library_Name) -Wl,--no-whole-archive \
-						 -l$(OpenSSL_Crypto_Library_Name) -lsgx_usgxssl
+						 -l$(OpenSSL_Crypto_Library_Name)
 
 $(info openssl library path $(PACKAGE_LIB))
 #echo OPENSSL_LIBRARY_PATH
@@ -59,7 +54,9 @@ LD_FLAGS         += -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles \
                     -Wl,--no-whole-archive -Wl,--start-group $(ENCLAVE_LIB_PARTS) -Wl,--end-group \
                     -Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
                     -Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \
-                    -Wl,--defsym,__ImageBase=0 
+                    -Wl,--defsym,__ImageBase=0
+
+
 TRUSTED_OBJECTS   = $(ENCLAVE)_t.o
 UNTRUSTED_OBJECTS = $(ENCLAVE)_u.o 
 TRUSTED_CODE      = $(ENCLAVE)_t.h $(ENCLAVE)_t.c
@@ -73,8 +70,8 @@ UNTRUSTED_CODE    = $(ENCLAVE)_u.h $(ENCLAVE)_u.c
 all: $(OUTPUT_T) $(OUTPUT_U)
 
 $(OUTPUT_T) : $(TRUSTED_OBJECTS) $(OBJECTS) $(PRIVATE_KEY)
-	echo "$(INDENT)[LD]  " $(OBJECTS) $(TRUSTED_OBJECTS) $(ENCLAVE_LIBS) $(ENCLAVE_LIBS_PARTS) $(OUTPUT_T_UNSIG) $(SgxSSL_Link_Libraries)
-	$(LD) $(OBJECTS) $(TRUSTED_OBJECTS) $(LD_FLAGS) $(LIB_DIRS) -o $(OUTPUT_T_UNSIG) $(SgxSSL_Link_Libraries)
+	echo "$(INDENT)[LD]  " $(OBJECTS) $(TRUSTED_OBJECTS) $(ENCLAVE_LIBS) $(ENCLAVE_LIBS_PARTS) $(OUTPUT_T_UNSIG)
+	$(LD) $(SgxSSL_Link_Libraries) $(OBJECTS) $(TRUSTED_OBJECTS) $(LD_FLAGS) $(LIB_DIRS)  -o $(OUTPUT_T_UNSIG) 
 	
 	echo "$(INDENT)[SGN]" $(OUTPUT_T_UNSIG)
 	$(SIGNER) sign -key $(PRIVATE_KEY) -enclave $(OUTPUT_T_UNSIG) -out $(OUTPUT_T) -config $(ENCLAVE_CONFIG) > /dev/null 2> /dev/null

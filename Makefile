@@ -28,7 +28,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #
-include sgx/buildenv.mk
+include app/buildenv.mk
 LINUX_SGX_BUILD ?= 0
 
 .PHONY: clean install uninstall
@@ -36,13 +36,13 @@ LINUX_SGX_BUILD ?= 0
 
 
 all:
-	$(MAKE) -C sgx/ all
+	$(MAKE) -C app/ all
 
 clean:
-	$(MAKE) -C sgx/ clean
+	$(MAKE) -C app/ clean
 	rm -rf $(PACKAGE_LIB)/$(OPENSSL_LIB) $(PACKAGE_INC)/openssl/
 test:
-	$(MAKE) -C sgx/ test
+	$(MAKE) -C app/ test
 
 install: $(PACKAGE_LIB)/$(TRUSTED_LIB) $(PACKAGE_LIB)/$(UNTRUSTED_LIB) $(PACKAGE_LIB)/$(OPENSSL_LIB)
 ifeq ($(DEBUG), 1)
