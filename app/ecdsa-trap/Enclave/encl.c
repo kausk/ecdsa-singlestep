@@ -61,9 +61,6 @@ char* sign_single(unsigned char* message, int len) {
 	int nid = OBJ_txt2nid("secp384r1");
 	ECDSA_SIG *signature = NULL;
 	const BIGNUM *sig_r, *sig_s;
-
-    BIGNUM* copy;
-    copy = (BIGNUM *) malloc(sizeof(BIGNUM));	
 	
 	key = EC_KEY_new_by_curve_name(nid);
 	EC_KEY_generate_key(key);
