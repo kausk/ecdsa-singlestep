@@ -10,6 +10,9 @@ OpenSSL_Crypto_Library_Name := sgx_tsgxssl_crypto
 SgxSSL_Link_Libraries := -L$(OPENSSL_LIBRARY_PATH) -Wl,--whole-archive -l$(SGXSSL_Library_Name) -Wl,--no-whole-archive \
 						 -l$(OpenSSL_Crypto_Library_Name)
 
+$(info openssl library path $(PACKAGE_LIB))
+#echo OPENSSL_LIBRARY_PATH
+
 
 CC		  = gcc
 AR		  = ar
@@ -51,12 +54,7 @@ LD_FLAGS         += -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles \
                     -Wl,--no-whole-archive -Wl,--start-group $(ENCLAVE_LIB_PARTS) -Wl,--end-group \
                     -Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
                     -Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \
-                    -Wl,--defsym,__ImageBase=0 \
-					-Wl,--whole-archive -lsgx_tsgxssl \
-					-Wl,--no-whole-archive \
-					-lsgx_tsgxssl_crypto \
-					-lsgx_tsetjmp
-
+                    -Wl,--defsym,__ImageBase=0 
 TRUSTED_OBJECTS   = $(ENCLAVE)_t.o
 UNTRUSTED_OBJECTS = $(ENCLAVE)_u.o 
 TRUSTED_CODE      = $(ENCLAVE)_t.h $(ENCLAVE)_t.c
