@@ -153,7 +153,7 @@ $(UNTRUSTED_DIR)/%.o: $(UNTRUSTED_DIR)/%.cpp
 	@echo "CXX  <=  $<"
 
 TestApp: $(UNTRUSTED_DIR)/TestEnclave_u.o $(App_Cpp_Objects)
-	$(VCXX) $^ -o $@ $(App_Link_Flags)
+	$(VCXX) $^ -o $@ $(App_Link_Flags) $(LDFLAGS)
 	@echo "LINK =>  $@"
 
 
