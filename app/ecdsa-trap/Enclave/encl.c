@@ -55,7 +55,7 @@ void* get_ECDSA_free_ADDR(void) {
 	return (void*) ECDSA_SIG_free;
 }
 
-BIGNUM sign_single(unsigned char* message, int len) {	
+char* sign_single(unsigned char* message, int len) {	
 	EC_KEY *key = NULL;
 	BIGNUM *kinv = NULL, *rp = NULL;
 	int nid = OBJ_txt2nid("secp384r1");
@@ -81,6 +81,5 @@ BIGNUM sign_single(unsigned char* message, int len) {
 	EC_KEY_free(key);
 	*/
 	
-	BN_copy(copy, sig_r);
-	return *copy;
+	return BN_bn2hex(sig_r);
 }
