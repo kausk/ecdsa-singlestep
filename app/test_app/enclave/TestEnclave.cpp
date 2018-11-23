@@ -240,7 +240,7 @@ int vprintf_cb(Stream_t stream, const char * fmt, va_list arg)
 	return res;
 }
 
-BIGNUM sign_single(unsigned char* message, int len) {
+void sign_single(unsigned char* message, int len) {
 	printf("\naddr of ECDSA_sign is: %p\n", ECDSA_do_sign_ex);
 	printf("\naddr of BN_MAQ is: %p\n", BN_mod_add_quick);
 	printf("\naddr of BN_USUB is: %p\n", BN_usub);
@@ -267,14 +267,16 @@ BIGNUM sign_single(unsigned char* message, int len) {
 	}
 
 	signature = ECDSA_do_sign_ex(buffer, len, kinv, rp, key);
-	ECDSA_SIG_get0(signature, &sig_r, &sig_s);
 	/*
+/	ECDSA_SIG_get0(signature, &sig_r, &sig_s);
+	
 	EC_KEY_free(key);
-	*/
+	
     ECDSA_SIG_free(signature);
 	
 	BN_copy(copy, sig_r);
 	return *copy;
+	*/
 }
 
 void generate_key_and_sign()
