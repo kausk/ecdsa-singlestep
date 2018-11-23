@@ -4,9 +4,14 @@ SGXSSL_INC = /opt/intel/sgxssl/include/
 include ../../buildenv.mk
 # Added to build with SgxSSL libraries
 TSETJMP_LIB := -lsgx_tsetjmp
-OPENSSL_LIBRARY_PATH := $(PACKAGE_LIB)
+OPENSSL_LIBRARY_PATH := $(PACKAGE_LIB)/
 SGXSSL_Library_Name := sgx_tsgxssl
 OpenSSL_Crypto_Library_Name := sgx_tsgxssl_crypto
+
+#SgxSSL_Link_Libraries := -L$(OPENSSL_LIBRARY_PATH) -Wl,--whole-archive -l$(SGXSSL_Library_Name) \ 
+#						 -Wl,--no-whole-archive \
+#						 -l$(OpenSSL_Crypto_Library_Name)
+
 SgxSSL_Link_Libraries := -L$(OPENSSL_LIBRARY_PATH) -Wl,--whole-archive -l$(SGXSSL_Library_Name) -Wl,--no-whole-archive \
 						 -l$(OpenSSL_Crypto_Library_Name)
 
@@ -68,8 +73,8 @@ UNTRUSTED_CODE    = $(ENCLAVE)_u.h $(ENCLAVE)_u.c
 all: $(OUTPUT_T) $(OUTPUT_U)
 
 $(OUTPUT_T) : $(TRUSTED_OBJECTS) $(OBJECTS) $(PRIVATE_KEY)
-	echo "$(INDENT)[LD]  " $(OBJECTS) $(TRUSTED_OBJECTS) $(ENCLAVE_LIBS) $(ENCLAVE_LIBS_PARTS) $(SgxSSL_Link_Libraries) $(OUTPUT_T_UNSIG)
-	$(LD) $(OBJECTS) $(TRUSTED_OBJECTS) $(LD_FLAGS) $(LIB_DIRS) $(SgxSSL_Link_Libraries) -o $(OUTPUT_T_UNSIG) 
+	echo "$(INDENT)[LD]  " $(OBJECTS) $(TRUSTED_OBJECTS) $(ENCLAVE_LIBS) $(ENCLAVE_LIBS_PARTS) $(OUTPUT_T_UNSIG) $(SgxSSL_Link_Libraries)
+	$(LD) $(OBJECTS) $(TRUSTED_OBJECTS) $(LD_FLAGS) $(LIB_DIRS) -o $(OUTPUT_T_UNSIG) $(SgxSSL_Link_Libraries)
 	
 	echo "$(INDENT)[SGN]" $(OUTPUT_T_UNSIG)
 	$(SIGNER) sign -key $(PRIVATE_KEY) -enclave $(OUTPUT_T_UNSIG) -out $(OUTPUT_T) -config $(ENCLAVE_CONFIG) > /dev/null 2> /dev/null
