@@ -47,6 +47,9 @@ run: clean all
 	sudo $(URTS_LD_LIBRARY_PATH) ./app
 
 $(OUTPUT): $(BUILDDIRS) $(OBJECTS)
+	$(info output objects)
+	$(info line 1 $(OBJECTS))
+	$(info line 2 $(LD) $(OBJECTS) $(LDFLAGS) -o $(OUTPUT))
 	echo "$(INDENT)[LD]" $(OBJECTS) $(LIBS) -o $(OUTPUT) 
 	$(LD) $(OBJECTS) $(LDFLAGS) -o $(OUTPUT) 
 
