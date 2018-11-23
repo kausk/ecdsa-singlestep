@@ -4,7 +4,7 @@ SGXSSL_INC = /opt/intel/sgxssl/include/
 include ../../buildenv.mk
 # Added to build with SgxSSL libraries
 TSETJMP_LIB := -lsgx_tsetjmp
-OPENSSL_LIBRARY_PATH := $(PACKAGE_LIB)/
+OPENSSL_LIBRARY_PATH := $(PACKAGE_LIB)
 SGXSSL_Library_Name := sgx_tsgxssl
 OpenSSL_Crypto_Library_Name := sgx_tsgxssl_crypto
 SgxSSL_Link_Libraries := -L$(OPENSSL_LIBRARY_PATH) -Wl,--whole-archive -l$(SGXSSL_Library_Name) -Wl,--no-whole-archive \
