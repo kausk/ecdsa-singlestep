@@ -1,3 +1,16 @@
+## SGX-SSL Setup
+
+include ../buildenv.mk
+# Added to build with SgxSSL libraries
+TSETJMP_LIB := -lsgx_tsetjmp
+OPENSSL_LIBRARY_PATH := $(PACKAGE_LIB)/
+SGXSSL_Library_Name := sgx_tsgxssl
+OpenSSL_Crypto_Library_Name := sgx_tsgxssl_crypto
+SgxSSL_Link_Libraries := -L$(OPENSSL_LIBRARY_PATH) -Wl,--whole-archive -l$(SGXSSL_Library_Name) -Wl,--no-whole-archive \
+						 -l$(OpenSSL_Crypto_Library_Name)
+
+
+
 LIBSGXSTEP_DIR       = ../..
 LIBSGXSTEP           = $(LIBSGXSTEP_DIR)/libsgxstep
 URTS_LIB_PATH        = $(LIBSGXSTEP_DIR)/linux-sgx/psw/urts/linux

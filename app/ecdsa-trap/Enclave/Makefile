@@ -1,10 +1,23 @@
+## SSL
+SGX_SDK_INC = /opt/intel/sgxsdk/include/
+SGXSSL_INC = /opt/intel/sgxssl/include/
+include ../../buildenv.mk
+# Added to build with SgxSSL libraries
+TSETJMP_LIB := -lsgx_tsetjmp
+OPENSSL_LIBRARY_PATH := $(PACKAGE_LIB)/
+SGXSSL_Library_Name := sgx_tsgxssl
+OpenSSL_Crypto_Library_Name := sgx_tsgxssl_crypto
+SgxSSL_Link_Libraries := -L$(OPENSSL_LIBRARY_PATH) -Wl,--whole-archive -l$(SGXSSL_Library_Name) -Wl,--no-whole-archive \
+						 -l$(OpenSSL_Crypto_Library_Name)
+
+
 CC		  = gcc
 AR		  = ar
 LD		  = gcc
 EDGER		  = sgx_edger8r
 SIGNER		  = sgx_sign
-INCLUDE       = -I$(SGX_SDK)/include/ -I$(SGX_SDK)/include/tlibc
-T_CFLAGS	  = $(CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector -g -Os
+INCLUDE       = -I$(SGX_SDK)/include/ -I$(SGX_SDK)/include/tlibc -I$(SGXSSL_INC) #-I$(SGX_SDK_INC) 
+T_CFLAGS	  = $(CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector -g -Os -include "tsgxsslio.h"
 U_CFLAGS	  = $(CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector -g
 AR_FLAGS	  = rcs
 OBJECTS		  = encl.o
@@ -19,6 +32,8 @@ else
 	LIB_SUFX  = 64
 endif
 
+SGXSSL_TRUSTED_LIB_PATH = 
+
 ENCLAVE_LIBS      = $(LIB_SGX_TRTS)
 ENCLAVE_LIB_PARTS = -lsgx_tstdc -lsgx_tcrypto $(LIB_SGX_TSERVICE)
 ENCLAVE	          = encl
@@ -30,13 +45,18 @@ ENCLAVE_CONFIG    = $(ENCLAVE).config.xml
 OUTPUT_T          = $(ENCLAVE).so
 OUTPUT_T_UNSIG    = $(ENCLAVE).unsigned.so
 OUTPUT_U          = lib$(ENCLAVE)_proxy.a
-LIB_DIRS          = -L $(SGX_SDK)/lib$(LIB_SUFX)/
+LIB_DIRS          = -L $(SGX_SDK)/lib$(LIB_SUFX)/ 
 LD_FLAGS         += -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles \
                     -Wl,--whole-archive -Wl,--start-group $(ENCLAVE_LIBS) -Wl,--end-group \
                     -Wl,--no-whole-archive -Wl,--start-group $(ENCLAVE_LIB_PARTS) -Wl,--end-group \
                     -Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
                     -Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \
-                    -Wl,--defsym,__ImageBase=0
+                    -Wl,--defsym,__ImageBase=0 \
+					-Wl,--whole-archive -lsgx_tsgxssl \
+					-Wl,--no-whole-archive \
+					-lsgx_tsgxssl_crypto \
+					-lsgx_tsetjmp
+
 TRUSTED_OBJECTS   = $(ENCLAVE)_t.o
 UNTRUSTED_OBJECTS = $(ENCLAVE)_u.o 
 TRUSTED_CODE      = $(ENCLAVE)_t.h $(ENCLAVE)_t.c
@@ -44,9 +64,6 @@ UNTRUSTED_CODE    = $(ENCLAVE)_u.h $(ENCLAVE)_u.c
 
 
 
-## SSL
-SGX_SDK_INC = /opt/intel/sgxsdk/include/
-SGXSSL_INC = /opt/intel/sgxssl/include/
 
 
 #.SILENT:
@@ -54,7 +71,7 @@ all: $(OUTPUT_T) $(OUTPUT_U)
 
 $(OUTPUT_T) : $(TRUSTED_OBJECTS) $(OBJECTS) $(PRIVATE_KEY)
 	echo "$(INDENT)[LD]  " $(OBJECTS) $(TRUSTED_OBJECTS) $(ENCLAVE_LIBS) $(ENCLAVE_LIBS_PARTS) $(OUTPUT_T_UNSIG)
-	$(LD) $(OBJECTS) $(TRUSTED_OBJECTS) $(LD_FLAGS) $(LIB_DIRS) -o $(OUTPUT_T_UNSIG) 
+	$(LD) $(SgxSSL_Link_Libraries) $(OBJECTS) $(TRUSTED_OBJECTS) $(LD_FLAGS) $(LIB_DIRS)  -o $(OUTPUT_T_UNSIG) 
 	
 	echo "$(INDENT)[SGN]" $(OUTPUT_T_UNSIG)
 	$(SIGNER) sign -key $(PRIVATE_KEY) -enclave $(OUTPUT_T_UNSIG) -out $(OUTPUT_T) -config $(ENCLAVE_CONFIG) > /dev/null 2> /dev/null
