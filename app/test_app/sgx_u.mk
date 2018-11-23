@@ -143,6 +143,7 @@ $(UNTRUSTED_DIR)/TestEnclave_u.c: $(SGX_EDGER8R) enclave/TestEnclave.edl
 	@cd $(UNTRUSTED_DIR) && $(SGX_EDGER8R) --untrusted ../enclave/TestEnclave.edl --search-path $(PACKAGE_INC) --search-path $(SGX_SDK_INC)
 	@echo "GEN  =>  $@"
 
+
 $(UNTRUSTED_DIR)/TestEnclave_u.o: $(UNTRUSTED_DIR)/TestEnclave_u.c
 	$(VCC) $(App_C_Flags) -c $(LDFLAGS) $< -o $@
 	@echo "CC   <=  $<"
