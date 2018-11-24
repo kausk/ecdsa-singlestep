@@ -17,7 +17,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with SGX-Step. If not, see <http://www.gnu.org/licenses/>.
  */
-#include <stdunsigned int.h>
+#include <stdint.h>
 #include <sgx_trts.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +36,7 @@ __attribute__((aligned(4096))) unsigned int add_indicator;
 unsigned int gcdExtended(unsigned int a, unsigned int b, unsigned int *x, unsigned int *y); 
 
 
-unsigned int addunsigned ints(unsigned int x, unsigned int y) {
+unsigned int addInts(unsigned int x, unsigned int y) {
     add_indicator++;
     return x + y;
 }
@@ -61,7 +61,7 @@ unsigned int mod(unsigned int v, unsigned int modulus) {
     }
 }
 
-unsigned int random_unsigned int(unsigned int start, unsigned int end) {
+unsigned int random_int(unsigned int start, unsigned int end) {
     char seperator[PAGE_SIZE];
     unsigned int val;
     sgx_read_rand((unsigned char *) &val, 4);
@@ -72,14 +72,14 @@ unsigned int mul(unsigned int x, unsigned int y) {
     return x * y;
 }
 
-void prunsigned intf(const char *fmt, ...)
+void printf(const char *fmt, ...)
 {
     char buf[BUFSIZ] = {'\0'};
     va_list ap;
     va_start(ap, fmt);
-    vsnprunsigned intf(buf, BUFSIZ, fmt, ap);
+    vsnprintf(buf, BUFSIZ, fmt, ap);
     va_end(ap);
-    uprunsigned int(buf);
+    uprint(buf);
 }
 
 
@@ -101,7 +101,7 @@ unsigned int hash(unsigned char *str) {
     unsigned int c;
     while (c = *str++)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    prunsigned intf("computed hash %d\n", hash);
+    printf("computed hash %d\n", hash);
     return hash;
 }
 
@@ -154,14 +154,14 @@ unsigned int ECDSA_sign(char* msg) {
 
     unsigned int hashed_msg = hash(msg);
     unsigned int modded_msg = mod(hashed_msg, Q);
-    unsigned int k = random_unsigned int(1, Q);
+    unsigned int k = random_int(1, Q);
     unsigned int k_inverse = modular_inv(k, Q);
     unsigned int r = F(k, Q);
     unsigned int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    unsigned int sum = addunsigned ints(modded_msg, rx);
-    prunsigned intf("Sum mod %d\n", sum);
+    unsigned int sum = addInts(modded_msg, rx);
+    printf("Sum mod %d\n", sum);
     sum = mod(sum, Q);
     // if mod called div_rem, then we can establish ineq
     unsigned int s = mul(k_inverse, sum);
