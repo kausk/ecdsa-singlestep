@@ -28,6 +28,11 @@ int x_pk = 46261;
 int PAGE_SIZE = 4096*5;
 
 __attribute__((aligned(4096))) int a;
+
+int add(int x, int y) {
+    return x + y;
+}
+
 // Vulnerable function
 int mod(int v, int modulus) {
     char seperator[PAGE_SIZE];
@@ -213,9 +218,6 @@ int mul2(int x, int y) {
     return x * y;
 }
 
-int add(int x, int y) {
-    return x + y;
-}
 
 void* get_ECDSA_sign_ADDR(void) {
 	return (void*) ECDSA_sign;
