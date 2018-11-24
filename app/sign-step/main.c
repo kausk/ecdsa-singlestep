@@ -59,6 +59,7 @@ void fault_handler(int signal)
     } else {
         printf("Caught fault %d corresponding mod_overflow operation.\n", signal);
         printf("Restoring access rights\n");
+        ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
         ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
         printf("mod not blocked anymore\n");
     }
