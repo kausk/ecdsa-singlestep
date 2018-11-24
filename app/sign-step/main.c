@@ -39,6 +39,7 @@ void* mod_ptr;
 int fault_fired = 0, aep_fired = 0;
 
 bool add_caught = false;
+bool mod_caught = false;
 
 void aep_cb_func(void)
 {
@@ -56,7 +57,7 @@ void fault_handler(int signal)
         add_caught = true;
         ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
         ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
-    } else {
+    } else if (!mod_caught) {
         printf("Caught fault %d corresponding mod_overflow operation.\n", signal);
         printf("Restoring access rights\n");
         ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
