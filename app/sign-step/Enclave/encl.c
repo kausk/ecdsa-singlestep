@@ -46,26 +46,60 @@ unsigned long hash(unsigned char *str) {
 }
 
 int random_int(int start, int end) {
-    return 0;
+    uint32_t val;
+    sgx_read_rand((unsigned char *) &val, 4);
+    return val % end
 }
 
+
+
+/* Modular inverse from https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/ */
 int modular_inv(int value, int modulus) {
-    return 0;
+    int x, y;
+    int g = gcdExtended(a, m, &x, &y);
+    if (g != 1) {
+        return -1;
+    } else { 
+        return (x%m + m) % m; 
+    }
+}
+int gcdExtended(int a, int b, int *x, int *y) { 
+    if (a == 0) { 
+        *x = 0, *y = 1; 
+        return b; 
+    } 
+    int x1, y1; // To store results of recursive call 
+    int gcd = gcdExtended(b%a, a, &x1, &y1); 
+    *x = y1 - (b/a) * x1; 
+    *y = x1; 
+    return gcd; 
 }
 
-int F(int v) {
-    return 0;
+unsigned long F(int v, int Q) {
+    char str[21];
+    sprintf(str, "%d", v);
+    return hash(&str) % Q;
 }
 
-int mul(int v) {
-    return 0;
-
+int mul(int x, int y) {
+    return x * y;
 }
 
+// Vulnerable function
 int mod(int v, int modulus) {
-    return 0;
+    if (v < modulus) {
+        return v;
+    } else {
+        int remainder = divrem(v, modulus);
+        return remainder; 
+    }
 }
 
-int add(int v, int modul) {
-    return 0;
+int divrem(int v, int modulus) {
+    int quotient = v / modulus;
+    return v - (modulus * quotient);
+}
+
+int add(int x, int y) {
+    return x + y;
 }
