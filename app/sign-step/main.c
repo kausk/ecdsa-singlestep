@@ -54,6 +54,7 @@ int main( int argc, char **argv )
    	printf("Creating enclave...\n");
 	SGX_ASSERT( sgx_create_enclave( "./Enclave/encl.so", /*debug=*/1,
                                     &token, &updated, &eid, NULL ) );
+    
     register_aep_cb(aep_cb_func);
     register_enclave_info();
     print_enclave_info();
