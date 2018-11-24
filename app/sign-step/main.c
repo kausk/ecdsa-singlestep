@@ -25,6 +25,7 @@
 #include "libsgxstep/enclave.h"
 #include "libsgxstep/debug.h"
 #include "libsgxstep/pt.h"
+#include <stdbool.h>
 
 void *a_pt;
 void* ptr;
