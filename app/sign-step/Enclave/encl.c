@@ -137,9 +137,6 @@ unsigned long F(int v, int Q) {
     return hash(&str) % Q;
 }
 
-void* get_ECDSA_sign_ADDR(void) {
-	return (void*) ECDSA_sign;
-}
 void* get_Add_ADDR(void) {
 	return &add_indicator;
 }
