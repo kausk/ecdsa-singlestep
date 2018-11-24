@@ -59,12 +59,12 @@ $(OUTPUT_U) : $(UNTRUSTED_OBJECTS)
 %_t.o : $(subst .o,.c,$@) edger
 	echo "$(INDENT)[CC] " $(subst .o,.c,$@) "(trusted edge)"
 	touch $(subst .o,.c,$@)
-	$(CC) -c $(INCLUDE) $(T_CFLAGS) $(subst .o,.c,$@)
+	$(CC) -falign-functions=4096 -c $(INCLUDE) $(T_CFLAGS) $(subst .o,.c,$@)
 
 %_u.o : $(subst .o,.c,$@) edger
 	echo "$(INDENT)[CC] " $(subst .o,.c,$@) "(untrusted edge)"
 	touch $(subst .o,.c,$@)
-	$(CC) -c $(INCLUDE) $(U_CFLAGS) $(subst .o,.c,$@)
+	$(CC) -falign-functions=4096 -c $(INCLUDE) $(U_CFLAGS) $(subst .o,.c,$@)
 
 %.o : %.c edger
 	echo "$(INDENT)[CC] " $< "(core)"

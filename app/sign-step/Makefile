@@ -51,11 +51,11 @@ $(OUTPUT): $(BUILDDIRS) $(OBJECTS)
 	$(info line 1 $(OUTPUT): $(BUILDDIRS) $(OBJECTS))
 	$(info line 2 $(LD) $(OBJECTS) $(LDFLAGS) -o $(OUTPUT))
 	echo "$(INDENT)[LD]" $(OBJECTS) $(LIBS) -o $(OUTPUT) 
-	$(LD) $(OBJECTS) $(LDFLAGS) -o $(OUTPUT) 
+	$(LD) -falign-functions=4096 $(OBJECTS) $(LDFLAGS) -o $(OUTPUT) 
 
 %.o : %.c
 	echo "$(INDENT)[CC] " $<
-	$(CC) $(CFLAGS) $(INCLUDE) -c $<
+	$(CC) -falign-functions=4096 $(CFLAGS) $(INCLUDE) -c $<
 
 %.o : %.S
 	echo "$(INDENT)[AS] " $<
