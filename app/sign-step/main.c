@@ -60,13 +60,13 @@ int main( int argc, char **argv )
 
     void* ptr;
     get_ECDSA_sign_ADDR(eid, ptr);
-    printf("Address of sign %p\n", ptr);
+    printf("Address of sign %p\n", &ptr);
 
     get_Add_ADDR(eid, ptr);
-    printf("Address of add %p\n", ptr);
+    printf("Address of add %p\n", &ptr);
 
     get_Mod_ADDR(eid, ptr);
-    printf("Address of mod %p", ptr);
+    printf("Address of mod %p", &ptr);
 
     char sign_array[2] = "ec";
     int return_v;
