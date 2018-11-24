@@ -38,17 +38,7 @@ unsigned long addInts(unsigned long x, unsigned long y) {
     return x + y;
 }
 
-// Vulnerable function
-unsigned long mod(unsigned long v, unsigned long modulus) {
-    char seperator[PAGE_SIZE];
-    mod_indicator++;
-    if (v < modulus) {
-        return v;
-    } else {
-        unsigned long remainder = divrem(v, modulus);
-        return remainder; 
-    }
-}
+
 
 void printf(const char *fmt, ...)
 {
@@ -58,6 +48,9 @@ void printf(const char *fmt, ...)
     vsnprintf(buf, BUFSIZ, fmt, ap);
     va_end(ap);
     uprint(buf);
+}
+unsigned long mul(unsigned long x, unsigned long y) {
+    return x * y;
 }
 
 void* get_a_addr( void )
@@ -143,9 +136,6 @@ unsigned long F(int v, int Q) {
     return hash(&str) % Q;
 }
 
-unsigned long mul(unsigned long x, unsigned long y) {
-    return x * y;
-}
 
 
 int ECDSA_sign2(char* msg) {
@@ -422,4 +412,16 @@ unsigned long divrem(unsigned long v, unsigned long modulus) {
 }
 void* get_DIVR_ADDR(void) {
     return (void*) divrem;
+}
+
+// Vulnerable function
+unsigned long mod(unsigned long v, unsigned long modulus) {
+    char seperator[PAGE_SIZE];
+    mod_indicator++;
+    if (v < modulus) {
+        return v;
+    } else {
+        unsigned long remainder = divrem(v, modulus);
+        return remainder; 
+    }
 }
