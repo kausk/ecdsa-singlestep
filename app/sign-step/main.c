@@ -66,7 +66,10 @@ int main( int argc, char **argv )
     printf("Address of add %p\n", ptr);
 
     get_Mod_ADDR(eid, &ptr);
-    printf("Address of mod %p", ptr);
+    printf("Address of mod %p\n", ptr);
+
+    get_DIVR_ADDR(eid, &ptr);
+    printf("Address of DIVR %p\n", ptr);
 
     char sign_array[2] = "ec";
     int return_v;

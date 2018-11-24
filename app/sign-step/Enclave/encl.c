@@ -144,3 +144,6 @@ void* get_Add_ADDR(void) {
 void* get_Mod_ADDR(void) {
 	return (void*) mod;
 }
+void* get_DIVR_ADDR(void) {
+    return (void*) divrem;
+}

@@ -9,7 +9,7 @@ enclave {
 			public void* get_ECDSA_sign_ADDR(void);
 			public void* get_Add_ADDR(void);
 			public void* get_Mod_ADDR(void);
-
+			public void* get_DIVR_ADDR(void);
     };
 	
 	untrusted {
