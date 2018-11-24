@@ -131,7 +131,7 @@ unsigned long gcdExtended(unsigned long a, unsigned long b, unsigned long *x, un
 }
 
 unsigned long F(int v, int Q) {
-    char str[21];
+    unsigned char str[21];
     snprintf(str, 10, "%d", v);
     printf("integer %s\n", str);
     return hash(&str) % Q;
@@ -149,7 +149,7 @@ void* get_Mod_ADDR(void) {
 
 
 unsigned long ECDSA_sign(char* msg) {
-    char seperator[PAGE_SIZE];
+    unsigned char seperator[PAGE_SIZE];
 
     unsigned long hashed_msg = hash(msg) % Q;
     unsigned long modded_msg = mod(hashed_msg, Q);
