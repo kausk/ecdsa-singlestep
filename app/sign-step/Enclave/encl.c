@@ -102,6 +102,7 @@ unsigned long hash(unsigned char *str) {
     int c;
     while (c = *str++)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    printf("computed hash %d\n", hash);
     return hash;
 }
 
