@@ -166,6 +166,6 @@ unsigned int ECDSA_sign(char* msg) {
     // if mod called div_rem, then we can establish ineq
     unsigned int s = mul(k_inverse, sum);
     s = mod(s, Q);
-    prunsigned intf("Signed value %d\n",  s);
+    printf("Signed value %d\n",  s);
     return r;
 }
