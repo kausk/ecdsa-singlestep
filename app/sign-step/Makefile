@@ -25,7 +25,7 @@ else
 endif
 
 CFLAGS              += -fPIC -fno-stack-protector -fno-builtin -fno-jump-tables \
-                       -fno-common -Wno-attributes -g -D_GNU_SOURCE -O0
+                       -fno-common -Wno-attributes -g -D_GNU_SOURCE -O1
 INCLUDE              = -I$(SGX_SDK)/include/ -I$(LIBSGXSTEP_DIR) 
 LDFLAGS             += -lsgx-step -lencl_proxy -lsgx_urts \
                        -lsgx_uae_service -pthread $(SUBDIRS:%=-L %) -L$(SGX_SDK)/lib$(LIB_SUFX)/ \
