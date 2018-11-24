@@ -25,7 +25,7 @@
 
 int Q = 93529;
 int x_pk = 46261;
-int PAGE_SIZE = 4096;
+int PAGE_SIZE = 4096*5;
 
 __attribute__((aligned(4096))) int a;
 
@@ -51,6 +51,8 @@ void enclave_dummy_call(void)
 }
 
 int ECDSA_sign(char* msg) {
+    char seperator[PAGE_SIZE];
+
     int hashed_msg = hash(msg) % Q;
     int modded_msg = mod(hashed_msg, Q);
     int k = random_int(1, Q);
@@ -69,6 +71,8 @@ int ECDSA_sign(char* msg) {
 
 // djb2 from http://www.cse.yorku.ca/~oz/hash.html
 int hash(unsigned char *str) {
+    char seperator[PAGE_SIZE];
+
     int hash = 5381;
     int c;
     while (c = *str++)
@@ -77,6 +81,8 @@ int hash(unsigned char *str) {
 }
 
 int random_int(int start, int end) {
+    char seperator[PAGE_SIZE];
+
     uint32_t val;
     sgx_read_rand((unsigned char *) &val, 4);
     return val % end;
@@ -84,6 +90,8 @@ int random_int(int start, int end) {
 
 /* Modular inverse from https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/ */
 int modular_inv(int value, int modulus) {
+    char seperator[PAGE_SIZE];
+
     int x, y;
     int g = gcdExtended(a, modulus, &x, &y);
     if (g != 1) {
@@ -93,6 +101,8 @@ int modular_inv(int value, int modulus) {
     }
 }
 int gcdExtended(int a, int b, int *x, int *y) { 
+    char seperator[PAGE_SIZE];
+
     if (a == 0) { 
         *x = 0, *y = 1; 
         return b; 
@@ -105,6 +115,8 @@ int gcdExtended(int a, int b, int *x, int *y) {
 }
 
 int F(int v, int Q) {
+    char seperator[PAGE_SIZE];
+
     char str[21];
     //itoa(v, str, 10);
     snprintf(str, 10, "%d", v);
@@ -117,6 +129,7 @@ int mul(int x, int y) {
 
 // Vulnerable function
 int mod(int v, int modulus) {
+        char seperator[PAGE_SIZE];
     if (v < modulus) {
         return v;
     } else {
