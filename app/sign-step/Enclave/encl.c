@@ -33,6 +33,9 @@ __attribute__((aligned(4096))) int mod_indicator;
 
 __attribute__((aligned(4096))) int add_indicator;
 
+unsigned long gcdExtended(unsigned long a, unsigned long b, unsigned long *x, unsigned long *y); 
+
+
 unsigned long addInts(unsigned long x, unsigned long y) {
     add_indicator++;
     return x + y;
