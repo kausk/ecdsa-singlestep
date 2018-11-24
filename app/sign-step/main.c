@@ -57,9 +57,6 @@ void fault_handler(int signal)
         printf("Restoring access rights\n");
         ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
     }
-	
-    ASSERT(!mprotect(a_pt, 4096, PROT_READ | PROT_WRITE));
-    print_pte_adrs(a_pt);
     fault_fired++;
 }
 
