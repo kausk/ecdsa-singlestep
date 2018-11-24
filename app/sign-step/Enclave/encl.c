@@ -22,6 +22,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int Q = 93529;
+int x_pk = 46261;
+
 __attribute__((aligned(4096))) int a;
 
 void* get_a_addr( void )
@@ -36,12 +39,24 @@ void enclave_dummy_call(void)
 }
 
 int ECDSA_sign(char* msg) {
-    return 0;
+    int hashed_msg = hash(msg) % Q;
+    int modded_msg = mod(hashed_msg, Q);
+    int k = random_int(1, Q);
+    int k_inverse = modular_inv(k, Q);
+    int r = F(k);
+    int rx = mul(r, x_pk);
+    rx = mod(rx, Q);
+    // start of side channel
+    int sum = add(modded_msg, rx);
+    sum = mod(sum, Q);
+    int s = mul(k_inverse, sum);
+    s = mod(s, Q);
+    return r;
 }
 
 // djb2 from http://www.cse.yorku.ca/~oz/hash.html
-unsigned long hash(unsigned char *str) {
-    unsigned long hash = 5381;
+int hash(unsigned char *str) {
+    int hash = 5381;
     int c;
     while (c = *str++)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
@@ -53,8 +68,6 @@ int random_int(int start, int end) {
     sgx_read_rand((unsigned char *) &val, 4);
     return val % end;
 }
-
-
 
 /* Modular inverse from https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/ */
 int modular_inv(int value, int modulus) {
@@ -78,7 +91,7 @@ int gcdExtended(int a, int b, int *x, int *y) {
     return gcd; 
 }
 
-unsigned long F(int v, int Q) {
+int F(int v, int Q) {
     char str[21];
     //itoa(v, str, 10);
     snprintf(str, 10, "%d", v);
@@ -100,6 +113,7 @@ int mod(int v, int modulus) {
 }
 
 int divrem(int v, int modulus) {
+    printf("div rem being called");
     int quotient = v / modulus;
     return v - (modulus * quotient);
 }

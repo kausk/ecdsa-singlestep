@@ -4,7 +4,7 @@ enclave {
         	public void enclave_dummy_call(void);
 	    	public void* get_a_addr( void );
 
-		public int ECDSA_sign([user_check] char* msg);
+			public int ECDSA_sign([user_check] char* msg);
 
     };
 	
