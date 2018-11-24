@@ -75,12 +75,14 @@ int main( int argc, char **argv )
     printf("Address of DIVR %p\n", ptr);
 
     /* Faulting on MOD operation */
-    info("Faulting on add operation..");
+    
+    printf("addptr\n");
+    printf("addptr %p\n", add_ptr);
     print_pte_adrs(add_ptr);
     ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
     print_pte_adrs(add_ptr);
 
-    info("Faulting on mod_overflow operation");
+    printf("Faulting on mod_overflow operation\n");
     print_pte_adrs(mod_ptr);
     ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
     print_pte_adrs(mod_ptr);
@@ -89,11 +91,12 @@ int main( int argc, char **argv )
     /* mprotect to provoke page faults during enclaved execution */
 
 
-    info("calling enclave..");
+    printf("calling enclave..");
 
     char sign_array[2] = "ec";
     int return_v;
     ECDSA_sign(eid, &sign_array, &return_v);
+
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
 
