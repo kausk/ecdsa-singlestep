@@ -88,11 +88,6 @@ int main( int argc, char **argv )
     register_enclave_info();
     print_enclave_info();
 
-
-
-    get_ECDSA_sign_ADDR(eid, &ec_ptr);
-    printf("Address of sign %p\n", ec_ptr);
-
     get_Add_ADDR(eid, &add_ptr);
     printf("Address of add %p\n", add_ptr);
 
