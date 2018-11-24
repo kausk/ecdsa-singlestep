@@ -24,8 +24,8 @@ else
 	LIB_SUFX = 64
 endif
 
-CFLAGS              += -fPIC -fno-stack-protector -fno-builtin -fno-jump-tables \
-                       -fno-common -Wno-attributes -g -D_GNU_SOURCE -O1
+CFLAGS              += -falign-functions=4096 -fPIC -fno-stack-protector -fno-builtin -fno-jump-tables \
+                       -fno-common -Wno-attributes -g -D_GNU_SOURCE -O2
 INCLUDE              = -I$(SGX_SDK)/include/ -I$(LIBSGXSTEP_DIR) 
 LDFLAGS             += -lsgx-step -lencl_proxy -lsgx_urts \
                        -lsgx_uae_service -pthread $(SUBDIRS:%=-L %) -L$(SGX_SDK)/lib$(LIB_SUFX)/ \
@@ -51,11 +51,11 @@ $(OUTPUT): $(BUILDDIRS) $(OBJECTS)
 	$(info line 1 $(OUTPUT): $(BUILDDIRS) $(OBJECTS))
 	$(info line 2 $(LD) $(OBJECTS) $(LDFLAGS) -o $(OUTPUT))
 	echo "$(INDENT)[LD]" $(OBJECTS) $(LIBS) -o $(OUTPUT) 
-	$(LD) -falign-functions=4096 $(OBJECTS) $(LDFLAGS) -o $(OUTPUT) 
+	$(LD) $(OBJECTS) $(LDFLAGS) -o $(OUTPUT) 
 
 %.o : %.c
 	echo "$(INDENT)[CC] " $<
-	$(CC) -falign-functions=4096 $(CFLAGS) $(INCLUDE) -c $<
+	$(CC) $(CFLAGS) $(INCLUDE) -c $<
 
 %.o : %.S
 	echo "$(INDENT)[AS] " $<
