@@ -75,7 +75,7 @@ int main( int argc, char **argv )
     printf("Address of DIVR %p\n", ptr);
 
     /* Faulting on MOD operation */
-    info("revoking a access rights..");
+    printf("revoking a access rights..\n");
     SGX_ASSERT( get_a_addr(eid, &a_pt) );
     printf("a at %p\n", a_pt);
     print_pte_adrs(a_pt);
