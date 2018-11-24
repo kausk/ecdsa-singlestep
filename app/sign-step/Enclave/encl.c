@@ -37,7 +37,26 @@ unsigned long addInts(unsigned long x, unsigned long y) {
     add_indicator++;
     return x + y;
 }
+unsigned long divrem(unsigned long v, unsigned long modulus) {
+    char seperator[PAGE_SIZE];
+    unsigned long quotient = v / modulus;
+    return v - (modulus * quotient);
+}
+void* get_DIVR_ADDR(void) {
+    return (void*) divrem;
+}
 
+// Vulnerable function
+unsigned long mod(unsigned long v, unsigned long modulus) {
+    char seperator[PAGE_SIZE];
+    mod_indicator++;
+    if (v < modulus) {
+        return v;
+    } else {
+        unsigned long remainder = divrem(v, modulus);
+        return remainder; 
+    }
+}
 
 
 void printf(const char *fmt, ...)
@@ -405,23 +424,3 @@ void* get_Mod_ADDR3(void) {
  /* DUP */
 
 
-unsigned long divrem(unsigned long v, unsigned long modulus) {
-    char seperator[PAGE_SIZE];
-    unsigned long quotient = v / modulus;
-    return v - (modulus * quotient);
-}
-void* get_DIVR_ADDR(void) {
-    return (void*) divrem;
-}
-
-// Vulnerable function
-unsigned long mod(unsigned long v, unsigned long modulus) {
-    char seperator[PAGE_SIZE];
-    mod_indicator++;
-    if (v < modulus) {
-        return v;
-    } else {
-        unsigned long remainder = divrem(v, modulus);
-        return remainder; 
-    }
-}
