@@ -166,8 +166,6 @@ unsigned long int ECDSA_sign(char* msg) {
     printf("Sum mod %lu\n", sum);
     sum = mod(sum, Q);
     // if mod called div_rem, then we can establish ineq
-    unsigned long int s = mul(k_inverse, sum);
-    s = mod(s, Q);
     printf("Signed value %d\n",  s);
     return r;
 }
