@@ -153,7 +153,7 @@ int ECDSA_sign2(char* msg) {
     int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    int sum = add(modded_msg, rx);
+    int sum = addInts(modded_msg, rx);
     sum = mod(sum, Q);
     int s = mul(k_inverse, sum);
     s = mod(s, Q);
@@ -251,7 +251,7 @@ int ECDSA_sign10(char* msg) {
     int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    int sum = add(modded_msg, rx);
+    int sum = addInts(modded_msg, rx);
     sum = mod(sum, Q);
     int s = mul(k_inverse, sum);
     s = mod(s, Q);
@@ -328,7 +328,7 @@ int ECDSA_sign11(char* msg) {
     int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    int sum = add(modded_msg, rx);
+    int sum = addInts(modded_msg, rx);
     sum = mod(sum, Q);
     int s = mul(k_inverse, sum);
     s = mod(s, Q);
