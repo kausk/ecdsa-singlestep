@@ -77,7 +77,7 @@ int main( int argc, char **argv )
     /* Faulting on MOD operation */
     info("Faulting on add operation..");
     print_pte_adrs(add_ptr);
-    ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
+    ASSERT(!mprotect(&add_ptr, 4096, PROT_NONE));
     print_pte_adrs(add_ptr);
 
     info("Faulting on mod_overflow operation");
