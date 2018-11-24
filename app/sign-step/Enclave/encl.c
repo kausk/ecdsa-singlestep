@@ -26,6 +26,8 @@
 unsigned long int Q = 100003;
 unsigned long int x_pk = 46261;
 unsigned long int PAGE_SIZE = 4096*5;
+int unsigned_size = 32;
+int outlen = 5;
 
 __attribute__((aligned(4096))) unsigned long int a;
 
@@ -94,15 +96,28 @@ void enclave_dummy_call(void)
     return;
 }
 
+/* https://stackoverflow.com/questions/7666509/hash-function-for-string */
+unsigned int hash(unsigned char *s)
+{
+  unsigned int hashval;
+
+  for (hashval = 0; *s != '\0'; s++)
+    hashval = *s + 31*hashval;
+  printf("hashval %u\n", hashval % 65535);
+  return hashval % 65535;
+}
+
+/*
 // djb2 from http://www.cse.yorku.ca/~oz/hash.html
 unsigned long int hash(unsigned char *str) {
     char seperator[PAGE_SIZE];
     unsigned long hash = 5381;
     unsigned long int c;
     while (c = *str++)
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+        hash = ((hash << 5) + hash) + c; 
     return hash;
 }
+*/
 
 /* Modular inverse from https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/ */
 unsigned long int modular_inv(unsigned long int value, unsigned long int modulus) {
@@ -152,6 +167,7 @@ unsigned long int ECDSA_sign(char* msg) {
     char seperator[PAGE_SIZE];
 
     unsigned long int hashed_msg = hash(msg);
+    printf("hashed msg %d\n", hashed_msg >> (unsigned_size-outlen));
     unsigned long int modded_msg = mod(hashed_msg, Q);
     unsigned long int k = random_int(1, Q);
     printf("Random int k %lu\n", k);
