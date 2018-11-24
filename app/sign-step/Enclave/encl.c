@@ -28,6 +28,16 @@ int x_pk = 46261;
 
 __attribute__((aligned(4096))) int a;
 
+void printf(const char *fmt, ...)
+{
+    char buf[BUFSIZ] = {'\0'};
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(buf, BUFSIZ, fmt, ap);
+    va_end(ap);
+    uprint(buf);
+}
+
 void* get_a_addr( void )
 {
     return &a;

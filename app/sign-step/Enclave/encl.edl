@@ -9,5 +9,6 @@ enclave {
     };
 	
 	untrusted {
+		void uprint([in, string] const char *str);
 	};
 };

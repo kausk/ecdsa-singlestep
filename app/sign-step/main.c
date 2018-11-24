@@ -76,3 +76,13 @@ int main( int argc, char **argv )
     info("all is well; exiting..");
 	return 0;
 }
+
+/* OCall functions */
+void uprint(const char *str)
+{
+    /* Proxy/Bridge will check the length and null-terminate 
+     * the input string to prevent buffer overflow. 
+     */
+    printf("%s", str);
+    fflush(stdout);
+}
