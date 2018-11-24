@@ -19,8 +19,6 @@
  */
 #include <stdint.h>
 #include <sgx_trts.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 __attribute__((aligned(4096))) int a;
 
@@ -59,11 +57,11 @@ int random_int(int start, int end) {
 /* Modular inverse from https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/ */
 int modular_inv(int value, int modulus) {
     int x, y;
-    int g = gcdExtended(a, modulus, &x, &y);
+    int g = gcdExtended(value, modulus, &x, &y);
     if (g != 1) {
         return -1;
     } else { 
-        return (x%modulus + modulus) % modulus; 
+        return (%m + modulus) % modulus; 
     }
 }
 int gcdExtended(int a, int b, int *x, int *y) { 
@@ -80,8 +78,7 @@ int gcdExtended(int a, int b, int *x, int *y) {
 
 unsigned long F(int v, int Q) {
     char str[21];
-    //itoa(v, str, 10);
-    snprintf(str, 10, "%d", v);
+    sprintf(str, "%d", v);
     return hash(&str) % Q;
 }
 
