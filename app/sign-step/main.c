@@ -60,6 +60,7 @@ void fault_handler(int signal)
         printf("Caught fault %d corresponding mod_overflow operation.\n", signal);
         printf("Restoring access rights\n");
         ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
+        printf("mod not blocked anymore\n");
     }
     fault_fired++;
 }
@@ -99,6 +100,9 @@ int main( int argc, char **argv )
 
     get_DIVR_ADDR(eid, &ptr);
     printf("Address of DIVR %p\n", ptr);
+
+    ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
+    ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
 
     printf("Faulting on add operation at %p\n", add_ptr);
     print_pte_adrs(add_ptr);
