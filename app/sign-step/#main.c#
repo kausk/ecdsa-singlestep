@@ -57,11 +57,6 @@ int main( int argc, char **argv )
     register_aep_cb(aep_cb_func);
     register_enclave_info();
     print_enclave_info();
-
-    char sign_array[10] = "ecdsaecdsa";
-    int return_v;
-    ECDSA_sign(eid, &sign_array, &return_v);
-    printf("signed message %d", return_v);
     
     /* mprotect to provoke page faults during enclaved execution */
     info("revoking a access rights..");

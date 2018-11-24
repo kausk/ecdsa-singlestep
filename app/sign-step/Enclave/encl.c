@@ -62,6 +62,7 @@ int ECDSA_sign(char* msg) {
     sum = mod(sum, Q);
     int s = mul(k_inverse, sum);
     s = mod(s, Q);
+    printf("Signed value %d\n",  s);
     return r;
 }
 
@@ -124,7 +125,7 @@ int mod(int v, int modulus) {
 }
 
 int divrem(int v, int modulus) {
-    printf("div rem being called");
+    printf("div rem being called\n");
     int quotient = v / modulus;
     return v - (modulus * quotient);
 }
