@@ -28,6 +28,9 @@
 #include <stdbool.h>
 #include <time.h>
 
+unsigned long int Q = 100003;
+
+
 void *a_pt;
 void* ptr;
 void* ec_ptr;
@@ -114,7 +117,7 @@ int main( int argc, char **argv )
 
     char sign_array[2] = "ec";
     unsigned long int return_v;
-    unsigned long r = ECDSA_sign(eid, random_msg(), &return_v);
+    unsigned long r = ECDSA_sign(eid, Q/2, &return_v);
 
     // printf("ECDSA_r = %lu\n", return_v);
 
