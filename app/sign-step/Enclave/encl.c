@@ -151,12 +151,13 @@ void* get_Add_ADDR(void) {
 void* get_Mod_ADDR(void) {
 	return (void*) mod;
 }
-void* get_DIVR_ADDR(void) {
-    return (void*) divrem;
-}
+
 
 int divrem(int v, int modulus) {
     char seperator[PAGE_SIZE];
     int quotient = v / modulus;
     return v - (modulus * quotient);
+}
+void* get_DIVR_ADDR(void) {
+    return (void*) divrem;
 }
