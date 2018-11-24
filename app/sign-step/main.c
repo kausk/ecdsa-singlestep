@@ -87,25 +87,19 @@ int main( int argc, char **argv )
 
 
     /* mprotect to provoke page faults during enclaved execution */
-    info("revoking a access rights..");
-    SGX_ASSERT( get_a_addr(eid, &a_pt) );
-    info("a at %p", a_pt);
-    print_pte_adrs(a_pt);
-    ASSERT(!mprotect(a_pt, 4096, PROT_NONE));
-    print_pte_adrs(a_pt);
-    ASSERT(signal(SIGSEGV, fault_handler) != SIG_ERR);
+
 
     info("calling enclave..");
-    SGX_ASSERT( enclave_dummy_call(eid) );
 
+    char sign_array[2] = "ec";
+    int return_v;
+    ECDSA_sign(eid, &sign_array, &return_v);
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
 
     info("all is well; exiting..");
 
-    char sign_array[2] = "ec";
-    int return_v;
-    ECDSA_sign(eid, &sign_array, &return_v);
+
 
 	return 0;
 }
