@@ -28,6 +28,16 @@ int x_pk = 46261;
 int PAGE_SIZE = 4096*5;
 
 __attribute__((aligned(4096))) int a;
+// Vulnerable function
+int mod(int v, int modulus) {
+        char seperator[PAGE_SIZE];
+    if (v < modulus) {
+        return v;
+    } else {
+        int remainder = divrem(v, modulus);
+        return remainder; 
+    }
+}
 
 void printf(const char *fmt, ...)
 {
@@ -127,22 +137,6 @@ int mul(int x, int y) {
     return x * y;
 }
 
-// Vulnerable function
-int mod(int v, int modulus) {
-        char seperator[PAGE_SIZE];
-    if (v < modulus) {
-        return v;
-    } else {
-        int remainder = divrem(v, modulus);
-        return remainder; 
-    }
-}
-
-int divrem(int v, int modulus) {
-    char seperator[PAGE_SIZE];
-    int quotient = v / modulus;
-    return v - (modulus * quotient);
-}
 
 int add(int x, int y) {
     return x + y;
@@ -159,4 +153,10 @@ void* get_Mod_ADDR(void) {
 }
 void* get_DIVR_ADDR(void) {
     return (void*) divrem;
+}
+
+int divrem(int v, int modulus) {
+    char seperator[PAGE_SIZE];
+    int quotient = v / modulus;
+    return v - (modulus * quotient);
 }
