@@ -25,6 +25,7 @@
 
 int Q = 93529;
 int x_pk = 46261;
+int PAGE_SIZE = 4096;
 
 __attribute__((aligned(4096))) int a;
 
@@ -125,11 +126,21 @@ int mod(int v, int modulus) {
 }
 
 int divrem(int v, int modulus) {
-    printf("div rem being called\n");
+    char seperator[PAGE_SIZE];
     int quotient = v / modulus;
     return v - (modulus * quotient);
 }
 
 int add(int x, int y) {
     return x + y;
+}
+
+void* get_ECDSA_sign_ADDR(void) {
+	return (void*) ECDSA_sign;
+}
+void* get_Add_ADDR(void) {
+	return (void*) add;
+}
+void* get_Mod_ADDR(void) {
+	return (void*) mod;
 }

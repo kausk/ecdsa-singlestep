@@ -51,18 +51,21 @@ int main( int argc, char **argv )
 	int updated = 0;
     sgx_enclave_id_t eid = 0;
 
-   	info("Creating enclave...");
+   	info("Creating enclave...\n");
 	SGX_ASSERT( sgx_create_enclave( "./Enclave/encl.so", /*debug=*/1,
                                     &token, &updated, &eid, NULL ) );
     register_aep_cb(aep_cb_func);
     register_enclave_info();
     print_enclave_info();
 
-    char sign_array[10] = "ecdsaecdsa";
+    printf("Address of sign %p\n", get_ECDSA_sign_ADDR(eid));
+    printf("Address of add %p\n", get_Add_ADDR(eid));
+    printf("Address of mod %p", get_Mod_ADDR(eid));
+
+    char sign_array[2] = "ec";
     int return_v;
     ECDSA_sign(eid, &sign_array, &return_v);
-    printf("signed message %d", return_v);
-    
+
     /* mprotect to provoke page faults during enclaved execution */
     info("revoking a access rights..");
     SGX_ASSERT( get_a_addr(eid, &a_pt) );

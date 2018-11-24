@@ -5,6 +5,10 @@ enclave {
 	    	public void* get_a_addr( void );
 
 			public int ECDSA_sign([user_check] char* msg);
+			
+			public void* get_ECDSA_sign_ADDR(void);
+			public void* get_Add_ADDR(void);
+			public void* get_Mod_ADDR(void);
 
     };
 	
