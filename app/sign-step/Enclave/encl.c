@@ -101,7 +101,6 @@ unsigned long int hash(unsigned char *str) {
     unsigned long int c;
     while (c = *str++)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    printf("computed hash %d\n", hash);
     return hash;
 }
 
@@ -155,17 +154,15 @@ unsigned long int ECDSA_sign(char* msg) {
     unsigned long int hashed_msg = hash(msg);
     unsigned long int modded_msg = mod(hashed_msg, Q);
     unsigned long int k = random_int(1, Q);
+    printf("Random int k %lu\n", k);
     unsigned long int k_inverse = modular_inv(k, Q);
     unsigned long int r = F(k, Q);
+    printf("Hash fn F(k, Q) = %lu\n", r);
     unsigned long int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    printf("modded msg %lu\n", modded_msg);
-    printf("rx is %lu\n", rx);
     unsigned long int sum = addInts(modded_msg, rx);
-    printf("Sum mod %lu\n", sum);
     sum = mod(sum, Q);
     // if mod called div_rem, then we can establish ineq
-    printf("Signed value %d\n",  s);
     return r;
 }

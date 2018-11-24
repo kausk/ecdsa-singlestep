@@ -40,7 +40,7 @@ bool add_caught = false;
 void aep_cb_func(void)
 {
     uint64_t erip = edbgrd_erip() - (uint64_t) get_enclave_base();
-    printf("Hello world from AEP callback with erip=%#llx! Resuming enclave..\n", erip); 
+    printf("AEP callback with erip=%#llx. Resuming enclave..\n", erip); 
 
     aep_fired++;
 }
@@ -97,7 +97,6 @@ int main( int argc, char **argv )
     get_DIVR_ADDR(eid, &ptr);
     printf("Address of DIVR %p\n", ptr);
 
-    printf("addptr\n");
     printf("Faulting on add operation at %p\n", add_ptr);
     print_pte_adrs(add_ptr);
     ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
@@ -107,7 +106,6 @@ int main( int argc, char **argv )
     print_pte_adrs(mod_ptr);
     // ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
 
-
     ASSERT(signal(SIGSEGV, fault_handler) != SIG_ERR);
 
     /* mprotect to provoke page faults during enclaved execution */
@@ -115,8 +113,10 @@ int main( int argc, char **argv )
     printf("calling enclave..");
 
     char sign_array[2] = "ec";
-    int return_v;
-    ECDSA_sign(eid, random_msg(), &return_v);
+    unsigned long int return_v;
+    unsigned long r = ECDSA_sign(eid, random_msg(), &return_v);
+
+    // printf("ECDSA_r = %lu\n", return_v);
 
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
