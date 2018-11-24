@@ -58,6 +58,9 @@ int main( int argc, char **argv )
     register_enclave_info();
     print_enclave_info();
 
+    char sign_array[10] = "ecdsaecdsa";
+    ECDSA_sign(eid, &sign_array);
+
     /* mprotect to provoke page faults during enclaved execution */
     info("revoking a access rights..");
     SGX_ASSERT( get_a_addr(eid, &a_pt) );
