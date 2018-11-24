@@ -51,7 +51,7 @@ int main( int argc, char **argv )
 	int updated = 0;
     sgx_enclave_id_t eid = 0;
 
-   	info("Creating enclave...\n");
+   	printf("Creating enclave...\n");
 	SGX_ASSERT( sgx_create_enclave( "./Enclave/encl.so", /*debug=*/1,
                                     &token, &updated, &eid, NULL ) );
     register_aep_cb(aep_cb_func);
@@ -109,7 +109,7 @@ int main( int argc, char **argv )
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
 
-    info("all is well; exiting..");
+    printf("all is well; exiting..\n");
 
 
 
