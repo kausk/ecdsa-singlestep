@@ -21,6 +21,7 @@
 #include <sgx_trts.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 int Q = 93529;
 int x_pk = 46261;
