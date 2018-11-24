@@ -23,26 +23,26 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-unsigned int Q = 93529;
-unsigned int x_pk = 46261;
-unsigned int PAGE_SIZE = 4096*5;
+unsigned long int Q = 93529;
+unsigned long int x_pk = 46261;
+unsigned long int PAGE_SIZE = 4096*5;
 
-__attribute__((aligned(4096))) unsigned int a;
+__attribute__((aligned(4096))) unsigned long int a;
 
-__attribute__((aligned(4096))) unsigned int mod_indicator;
+__attribute__((aligned(4096))) unsigned long int mod_indicator;
 
-__attribute__((aligned(4096))) unsigned int add_indicator;
+__attribute__((aligned(4096))) unsigned long int add_indicator;
 
-unsigned int gcdExtended(unsigned int a, unsigned int b, unsigned int *x, unsigned int *y); 
+unsigned long int gcdExtended(unsigned long int a, unsigned long int b, unsigned long int *x, unsigned long int *y); 
 
 
-unsigned int addInts(unsigned int x, unsigned int y) {
+unsigned long int addInts(unsigned long int x, unsigned long int y) {
     add_indicator++;
     return x + y;
 }
-unsigned int divrem(unsigned int v, unsigned int modulus) {
+unsigned long int divrem(unsigned long int v, unsigned long int modulus) {
     char seperator[PAGE_SIZE];
-    unsigned int quotient = v / modulus;
+    unsigned long int quotient = v / modulus;
     return v - (modulus * quotient);
 }
 void* get_DIVR_ADDR(void) {
@@ -50,25 +50,25 @@ void* get_DIVR_ADDR(void) {
 }
 
 // Vulnerable function
-unsigned int mod(unsigned int v, unsigned int modulus) {
+unsigned long int mod(unsigned long int v, unsigned long int modulus) {
     char seperator[PAGE_SIZE];
     mod_indicator++;
     if (v < modulus) {
         return v;
     } else {
-        unsigned int remainder = divrem(v, modulus);
+        unsigned long int remainder = divrem(v, modulus);
         return remainder; 
     }
 }
 
-unsigned int random_int(unsigned int start, unsigned int end) {
+unsigned long int random_int(unsigned long int start, unsigned long int end) {
     char seperator[PAGE_SIZE];
-    unsigned int val;
+    unsigned long int val;
     sgx_read_rand((unsigned char *) &val, 4);
     return val % end;
 }
 
-unsigned int mul(unsigned int x, unsigned int y) {
+unsigned long int mul(unsigned long int x, unsigned long int y) {
     return x * y;
 }
 
@@ -95,10 +95,10 @@ void enclave_dummy_call(void)
 }
 
 // djb2 from http://www.cse.yorku.ca/~oz/hash.html
-unsigned int hash(unsigned char *str) {
+unsigned long int hash(unsigned char *str) {
     char seperator[PAGE_SIZE];
     unsigned long hash = 5381;
-    unsigned int c;
+    unsigned long int c;
     while (c = *str++)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
     printf("computed hash %d\n", hash);
@@ -106,32 +106,32 @@ unsigned int hash(unsigned char *str) {
 }
 
 /* Modular inverse from https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/ */
-unsigned int modular_inv(unsigned int value, unsigned int modulus) {
+unsigned long int modular_inv(unsigned long int value, unsigned long int modulus) {
     char seperator[PAGE_SIZE];
 
-    unsigned int x, y;
-    unsigned int g = gcdExtended(a, modulus, &x, &y);
+    unsigned long int x, y;
+    unsigned long int g = gcdExtended(a, modulus, &x, &y);
     if (g != 1) {
         return -1;
     } else { 
         return (x%modulus + modulus) % modulus; 
     }
 }
-unsigned int gcdExtended(unsigned int a, unsigned int b, unsigned int *x, unsigned int *y) { 
+unsigned long int gcdExtended(unsigned long int a, unsigned long int b, unsigned long int *x, unsigned long int *y) { 
     char seperator[PAGE_SIZE];
 
     if (a == 0) { 
         *x = 0, *y = 1; 
         return b; 
     } 
-    unsigned int x1, y1; // To store results of recursive call 
-    unsigned int gcd = gcdExtended(b%a, a, &x1, &y1); 
+    unsigned long int x1, y1; // To store results of recursive call 
+    unsigned long int gcd = gcdExtended(b%a, a, &x1, &y1); 
     *x = y1 - (b/a) * x1; 
     *y = x1; 
     return gcd; 
 }
 
-unsigned int F(unsigned int x, unsigned int Q) {
+unsigned long int F(unsigned long int x, unsigned long int Q) {
     x = ((x >> 16) ^ x) * 0x45d9f3b;
     x = ((x >> 16) ^ x) * 0x45d9f3b;
     x = (x >> 16) ^ x;
@@ -149,22 +149,22 @@ void* get_Mod_ADDR(void) {
  /* DUP */
 
 
-unsigned int ECDSA_sign(char* msg) {
+unsigned long int ECDSA_sign(char* msg) {
     char seperator[PAGE_SIZE];
 
-    unsigned int hashed_msg = hash(msg);
-    unsigned int modded_msg = mod(hashed_msg, Q);
-    unsigned int k = random_int(1, Q);
-    unsigned int k_inverse = modular_inv(k, Q);
-    unsigned int r = F(k, Q);
-    unsigned int rx = mul(r, x_pk);
+    unsigned long int hashed_msg = hash(msg);
+    unsigned long int modded_msg = mod(hashed_msg, Q);
+    unsigned long int k = random_int(1, Q);
+    unsigned long int k_inverse = modular_inv(k, Q);
+    unsigned long int r = F(k, Q);
+    unsigned long int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    unsigned int sum = addInts(modded_msg, rx);
+    unsigned long int sum = addInts(modded_msg, rx);
     printf("Sum mod %d\n", sum);
     sum = mod(sum, Q);
     // if mod called div_rem, then we can establish ineq
-    unsigned int s = mul(k_inverse, sum);
+    unsigned long int s = mul(k_inverse, sum);
     s = mod(s, Q);
     printf("Signed value %d\n",  s);
     return r;
