@@ -89,9 +89,10 @@ int main( int argc, char **argv )
 
     printf("AEBFunc\n");
     print_pte_adrs((void*) aep_cb_func);
-    /* mprotect to provoke page faults during enclaved execution */
 
-    ASSERT(!mprotect((void*) ECDSA_sign, 4096, PROT_NONE));
+    ASSERT(signal(SIGSEGV, fault_handler) != SIG_ERR);
+
+    /* mprotect to provoke page faults during enclaved execution */
 
     printf("calling enclave..");
 
