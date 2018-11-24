@@ -165,7 +165,7 @@ unsigned long int ECDSA_sign(char* hashed_msg) {
     unsigned long int hashed_msg = hash(msg);
     printf("hashed msg %d\n", hashed_msg >> (unsigned_size-outlen));
     */
-   unsigned long int modded_msg = mod(hashed_msg, Q);
+    unsigned long int modded_msg = mod(hashed_msg, Q);
     unsigned long int k = random_int(1, Q);
     printf("Random int k %lu\n", k);
     unsigned long int k_inverse = modular_inv(k, Q);

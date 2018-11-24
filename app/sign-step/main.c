@@ -50,6 +50,7 @@ void aep_cb_func(void)
 
 void fault_handler(int signal)
 {
+    /*
     if (!add_caught) {
         printf("Caught fault %d corresponding add operation.\n", signal);
         printf("Restoring add access rights and revoking access to mod_overflow\n");
@@ -63,6 +64,7 @@ void fault_handler(int signal)
         ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
         printf("mod not blocked anymore\n");
     }
+    */
     fault_fired++;
 }
 
