@@ -60,11 +60,12 @@ int main( int argc, char **argv )
     print_enclave_info();
 
     void* ptr;
+    void* ec_ptr;
     void* add_ptr;
     void* mod_ptr;
 
-    get_ECDSA_sign_ADDR(eid, &ptr);
-    printf("Address of sign %p\n", ptr);
+    get_ECDSA_sign_ADDR(eid, &ec_ptr);
+    printf("Address of sign %p\n", ec_ptr);
 
     get_Add_ADDR(eid, &add_ptr);
     printf("Address of add %p\n", add_ptr);
@@ -85,6 +86,9 @@ int main( int argc, char **argv )
     print_pte_adrs(mod_ptr);
     ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
     print_pte_adrs(mod_ptr);
+
+    printf("Faulting on ECDSA\n");
+    print_pte_adrs(ec_ptr);
 
     printf("AEBFunc\n");
     print_pte_adrs((void*) aep_cb_func);

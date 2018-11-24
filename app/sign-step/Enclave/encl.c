@@ -29,7 +29,7 @@ int PAGE_SIZE = 4096*5;
 
 __attribute__((aligned(4096))) int a;
 
-int add(int x, int y) {
+int addInts(int x, int y) {
     return x + y;
 }
 
@@ -76,7 +76,7 @@ int ECDSA_sign(char* msg) {
     int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    int sum = add(modded_msg, rx);
+    int sum = addInts(modded_msg, rx);
     sum = mod(sum, Q);
     int s = mul(k_inverse, sum);
     s = mod(s, Q);
@@ -220,13 +220,13 @@ int mul2(int x, int y) {
 
 
 void* get_ECDSA_sign_ADDR(void) {
-	return (void*) ECDSA_sign;
+	return &(void*) ECDSA_sign;
 }
 void* get_Add_ADDR(void) {
-	return (void*) add;
+	return &(void*) add;
 }
 void* get_Mod_ADDR(void) {
-	return (void*) mod;
+	return &(void*) mod;
 }
 
 /* DUPLICATE */
