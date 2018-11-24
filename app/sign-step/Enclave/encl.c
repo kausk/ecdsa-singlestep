@@ -152,7 +152,7 @@ void* get_Mod_ADDR(void) {
 int ECDSA_sign(char* msg) {
     char seperator[PAGE_SIZE];
 
-    int hashed_msg = hash(msg) % Q;
+    int hashed_msg = hash(msg);
     int modded_msg = mod(hashed_msg, Q);
     int k = random_int(1, Q);
     int k_inverse = modular_inv(k, Q);
@@ -161,7 +161,9 @@ int ECDSA_sign(char* msg) {
     rx = mod(rx, Q);
     // start of side channel
     int sum = addInts(modded_msg, rx);
+    printf("Sum mod %d\n", sum);
     sum = mod(sum, Q);
+    // if mod called div_rem, then we can establish ineq
     int s = mul(k_inverse, sum);
     s = mod(s, Q);
     printf("Signed value %d\n",  s);
