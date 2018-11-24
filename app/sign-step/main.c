@@ -26,6 +26,7 @@
 #include "libsgxstep/debug.h"
 #include "libsgxstep/pt.h"
 #include <stdbool.h>
+#include <time.h>
 
 void *a_pt;
 void* ptr;
@@ -58,6 +59,19 @@ void fault_handler(int signal)
         ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
     }
     fault_fired++;
+}
+
+char* random_msg(void) {
+  srand((unsigned int)(time(NULL)));
+  char msg[21];
+  /* help from https://codereview.stackexchange.com/questions/138703/simple-random-password-generator */
+  int i;
+  for (i = 0; i < 20; i++) {
+    msg[i] = 33 + rand() % 94;
+  }
+  msg[i] = '\0';
+  printf("random string is %s\n", msg);
+  return &msg;
 }
 
 int main( int argc, char **argv )
@@ -107,7 +121,7 @@ int main( int argc, char **argv )
 
     char sign_array[2] = "ec";
     int return_v;
-    ECDSA_sign(eid, &sign_array, &return_v);
+    ECDSA_sign(eid, random_msg(), &return_v);
 
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );

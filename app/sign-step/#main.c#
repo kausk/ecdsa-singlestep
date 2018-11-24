@@ -25,24 +25,47 @@
 #include "libsgxstep/enclave.h"
 #include "libsgxstep/debug.h"
 #include "libsgxstep/pt.h"
+#include <stdbool.h>
 
 void *a_pt;
+void* ptr;
+void* ec_ptr;
+void* add_ptr;
+void* mod_ptr;
 int fault_fired = 0, aep_fired = 0;
+
+bool add_caught = false;
 
 void aep_cb_func(void)
 {
     uint64_t erip = edbgrd_erip() - (uint64_t) get_enclave_base();
-    info("Hello world from AEP callback with erip=%#llx! Resuming enclave..", erip); 
+    printf("Hello world from AEP callback with erip=%#llx! Resuming enclave..\n", erip); 
 
     aep_fired++;
 }
 
 void fault_handler(int signal)
 {
-	info("Caught fault %d! Restoring access rights..", signal);
-    ASSERT(!mprotect(a_pt, 4096, PROT_READ | PROT_WRITE));
-    print_pte_adrs(a_pt);
+    if (!add_caught) {
+        printf("Caught fault %d corresponding add operation.\n", signal);
+        printf("Restoring add access rights and revoking access to mod_overflow\n");
+        add_caught = true;
+        ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
+        ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
+    } else {
+        printf("Caught fault %d corresponding mod_overflow operation.\n", signal);
+        printf("Restoring access rights\n");
+        ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
+    }
     fault_fired++;
+}
+
+
+  for (i = 0; i < 20; i++) {
+    msg[i] = 33 + rand() % 94;
+  }
+  msg[i] = '\0';
+  return &msg;
 }
 
 int main( int argc, char **argv )
@@ -51,29 +74,56 @@ int main( int argc, char **argv )
 	int updated = 0;
     sgx_enclave_id_t eid = 0;
 
-   	info("Creating enclave...");
+   	printf("Creating enclave...\n");
 	SGX_ASSERT( sgx_create_enclave( "./Enclave/encl.so", /*debug=*/1,
                                     &token, &updated, &eid, NULL ) );
+    
     register_aep_cb(aep_cb_func);
     register_enclave_info();
     print_enclave_info();
-    
-    /* mprotect to provoke page faults during enclaved execution */
-    info("revoking a access rights..");
-    SGX_ASSERT( get_a_addr(eid, &a_pt) );
-    info("a at %p", a_pt);
-    print_pte_adrs(a_pt);
-    ASSERT(!mprotect(a_pt, 4096, PROT_NONE));
-    print_pte_adrs(a_pt);
+
+
+
+    get_ECDSA_sign_ADDR(eid, &ec_ptr);
+    printf("Address of sign %p\n", ec_ptr);
+
+    get_Add_ADDR(eid, &add_ptr);
+    printf("Address of add %p\n", add_ptr);
+
+    get_Mod_ADDR(eid, &mod_ptr);
+    printf("Address of mod %p\n", mod_ptr);
+
+    get_DIVR_ADDR(eid, &ptr);
+    printf("Address of DIVR %p\n", ptr);
+
+    printf("addptr\n");
+    printf("Faulting on add operation at %p\n", add_ptr);
+    print_pte_adrs(add_ptr);
+    ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
+    print_pte_adrs(add_ptr);
+
+    printf("Will fault on mod_overflow operation once add is called \n");
+    print_pte_adrs(mod_ptr);
+    // ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
+
+
     ASSERT(signal(SIGSEGV, fault_handler) != SIG_ERR);
 
-    info("calling enclave..");
-    SGX_ASSERT( enclave_dummy_call(eid) );
+    /* mprotect to provoke page faults during enclaved execution */
+
+    printf("calling enclave..");
+
+    char sign_array[2] = "ec";
+    int return_v;
+    ECDSA_sign(eid, random_msg(), &return_v);
 
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
 
-    info("all is well; exiting..");
+    printf("all is well; exiting..\n");
+
+
+
 	return 0;
 }
 
