@@ -58,9 +58,15 @@ int main( int argc, char **argv )
     register_enclave_info();
     print_enclave_info();
 
-    printf("Address of sign %p\n", get_ECDSA_sign_ADDR(eid));
-    printf("Address of add %p\n", get_Add_ADDR(eid));
-    printf("Address of mod %p", get_Mod_ADDR(eid));
+    void* ptr;
+    get_ECDSA_sign_ADDR(eid, ptr);
+    printf("Address of sign %p\n", ptr);
+
+    get_Add_ADDR(eid, ptr);
+    printf("Address of add %p\n", ptr);
+
+    get_Mod_ADDR(eid, ptr);
+    printf("Address of mod %p", ptr);
 
     char sign_array[2] = "ec";
     int return_v;
