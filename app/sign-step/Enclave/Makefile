@@ -4,7 +4,7 @@ LD		  = gcc
 EDGER		  = sgx_edger8r
 SIGNER		  = sgx_sign
 INCLUDE       = -I$(SGX_SDK)/include/ -I$(SGX_SDK)/include/tlibc
-T_CFLAGS	  = $(CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector -g -Os
+T_CFLAGS	  = $(CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector -g -O0
 U_CFLAGS	  = $(CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector -g
 AR_FLAGS	  = rcs
 OBJECTS		  = encl.o
