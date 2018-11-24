@@ -33,16 +33,16 @@ __attribute__((aligned(4096))) int mod_indicator;
 
 __attribute__((aligned(4096))) int add_indicator;
 
-unsigned long gcdExtended(unsigned long a, unsigned long b, unsigned long *x, unsigned long *y); 
+int gcdExtended(int a, int b, int *x, int *y); 
 
 
-unsigned long addInts(unsigned long x, unsigned long y) {
+int addInts(int x, int y) {
     add_indicator++;
     return x + y;
 }
-unsigned long divrem(unsigned long v, unsigned long modulus) {
+int divrem(int v, int modulus) {
     char seperator[PAGE_SIZE];
-    unsigned long quotient = v / modulus;
+    int quotient = v / modulus;
     return v - (modulus * quotient);
 }
 void* get_DIVR_ADDR(void) {
@@ -50,25 +50,25 @@ void* get_DIVR_ADDR(void) {
 }
 
 // Vulnerable function
-unsigned long mod(unsigned long v, unsigned long modulus) {
+int mod(int v, int modulus) {
     char seperator[PAGE_SIZE];
     mod_indicator++;
     if (v < modulus) {
         return v;
     } else {
-        unsigned long remainder = divrem(v, modulus);
+        int remainder = divrem(v, modulus);
         return remainder; 
     }
 }
 
-unsigned long random_int(unsigned long start, unsigned long end) {
+int random_int(int start, int end) {
     char seperator[PAGE_SIZE];
-    unsigned long val;
+    int val;
     sgx_read_rand((unsigned char *) &val, 4);
     return val % end;
 }
 
-unsigned long mul(unsigned long x, unsigned long y) {
+int mul(int x, int y) {
     return x * y;
 }
 
@@ -95,46 +95,47 @@ void enclave_dummy_call(void)
 }
 
 // djb2 from http://www.cse.yorku.ca/~oz/hash.html
-unsigned long hash(unsigned char *str) {
+int hash(unsigned char *str) {
+    char seperator[PAGE_SIZE];
     unsigned long hash = 5381;
     int c;
     while (c = *str++)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    printf("computed hash %lu\n", hash);
+    printf("computed hash %d\n", hash);
     return hash;
 }
 
 /* Modular inverse from https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/ */
-unsigned long modular_inv(unsigned long value, unsigned long modulus) {
+int modular_inv(int value, int modulus) {
     char seperator[PAGE_SIZE];
 
-    unsigned long x, y;
-    unsigned long g = gcdExtended(a, modulus, &x, &y);
+    int x, y;
+    int g = gcdExtended(a, modulus, &x, &y);
     if (g != 1) {
         return -1;
     } else { 
         return (x%modulus + modulus) % modulus; 
     }
 }
-unsigned long gcdExtended(unsigned long a, unsigned long b, unsigned long *x, unsigned long *y) { 
+int gcdExtended(int a, int b, int *x, int *y) { 
     char seperator[PAGE_SIZE];
 
     if (a == 0) { 
         *x = 0, *y = 1; 
         return b; 
     } 
-    unsigned long x1, y1; // To store results of recursive call 
-    unsigned long gcd = gcdExtended(b%a, a, &x1, &y1); 
+    int x1, y1; // To store results of recursive call 
+    int gcd = gcdExtended(b%a, a, &x1, &y1); 
     *x = y1 - (b/a) * x1; 
     *y = x1; 
     return gcd; 
 }
 
-unsigned long F(int v, int Q) {
-    unsigned char str[21];
-    snprintf(str, 10, "%d", v);
-    printf("integer %s\n", str);
-    return hash(&str) % Q;
+int F(int x, int Q) {
+    x = ((x >> 16) ^ x) * 0x45d9f3b;
+    x = ((x >> 16) ^ x) * 0x45d9f3b;
+    x = (x >> 16) ^ x;
+    return x % Q;
 }
 
 void* get_Add_ADDR(void) {
@@ -148,20 +149,20 @@ void* get_Mod_ADDR(void) {
  /* DUP */
 
 
-unsigned long ECDSA_sign(char* msg) {
-    unsigned char seperator[PAGE_SIZE];
+int ECDSA_sign(char* msg) {
+    char seperator[PAGE_SIZE];
 
-    unsigned long hashed_msg = hash(msg) % Q;
-    unsigned long modded_msg = mod(hashed_msg, Q);
-    unsigned long k = random_int(1, Q);
-    unsigned long k_inverse = modular_inv(k, Q);
-    unsigned long r = F(k, Q);
-    unsigned long rx = mul(r, x_pk);
+    int hashed_msg = hash(msg) % Q;
+    int modded_msg = mod(hashed_msg, Q);
+    int k = random_int(1, Q);
+    int k_inverse = modular_inv(k, Q);
+    int r = F(k, Q);
+    int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    unsigned long sum = addInts(modded_msg, rx);
+    int sum = addInts(modded_msg, rx);
     sum = mod(sum, Q);
-    unsigned long s = mul(k_inverse, sum);
+    int s = mul(k_inverse, sum);
     s = mod(s, Q);
     printf("Signed value %d\n",  s);
     return r;
