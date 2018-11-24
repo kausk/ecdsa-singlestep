@@ -32,14 +32,14 @@ int fault_fired = 0, aep_fired = 0;
 void aep_cb_func(void)
 {
     uint64_t erip = edbgrd_erip() - (uint64_t) get_enclave_base();
-    info("Hello world from AEP callback with erip=%#llx! Resuming enclave..", erip); 
+    printf("Hello world from AEP callback with erip=%#llx! Resuming enclave..\n", erip); 
 
     aep_fired++;
 }
 
 void fault_handler(int signal)
 {
-	info("Caught fault %d! Restoring access rights..", signal);
+	printf("Caught fault %d! Restoring access rights..\n", signal);
     ASSERT(!mprotect(a_pt, 4096, PROT_READ | PROT_WRITE));
     print_pte_adrs(a_pt);
     fault_fired++;
