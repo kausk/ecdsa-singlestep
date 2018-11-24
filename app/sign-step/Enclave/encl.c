@@ -29,13 +29,19 @@ int PAGE_SIZE = 4096*5;
 
 __attribute__((aligned(4096))) int a;
 
+__attribute__((aligned(4096))) int mod_indicator;
+
+__attribute__((aligned(4096))) int add_indicator;
+
 int addInts(int x, int y) {
+    add_indicator++;
     return x + y;
 }
 
 // Vulnerable function
 int mod(int v, int modulus) {
     char seperator[PAGE_SIZE];
+    mod_indicator++;
     if (v < modulus) {
         return v;
     } else {
@@ -223,10 +229,10 @@ void* get_ECDSA_sign_ADDR(void) {
 	return (void*) ECDSA_sign;
 }
 void* get_Add_ADDR(void) {
-	return (void*) addInts;
+	return &add_indicator;
 }
 void* get_Mod_ADDR(void) {
-	return (void*) mod;
+	return &mod_indicator;
 }
 
 /* DUPLICATE */
@@ -328,7 +334,7 @@ int ECDSA_sign11(char* msg) {
     int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    int sum = add(modded_msg, rx);
+    int sum = addInts(modded_msg, rx);
     sum = mod(sum, Q);
     int s = mul(k_inverse, sum);
     s = mod(s, Q);
