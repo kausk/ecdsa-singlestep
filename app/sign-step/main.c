@@ -87,7 +87,8 @@ int main( int argc, char **argv )
     ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
     print_pte_adrs(mod_ptr);
 
-
+    printf("AEBFunc\n");
+    print_pte_adrs((void*) aep_cb_func);
     /* mprotect to provoke page faults during enclaved execution */
 
 
