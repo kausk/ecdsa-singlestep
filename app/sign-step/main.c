@@ -59,21 +59,27 @@ int main( int argc, char **argv )
     print_enclave_info();
 
     void* ptr;
+    void* add_ptr;
+    void* mod_ptr;
+
     get_ECDSA_sign_ADDR(eid, &ptr);
     printf("Address of sign %p\n", ptr);
 
-    get_Add_ADDR(eid, &ptr);
-    printf("Address of add %p\n", ptr);
+    get_Add_ADDR(eid, &add_ptr);
+    printf("Address of add %p\n", add_ptr);
 
-    get_Mod_ADDR(eid, &ptr);
-    printf("Address of mod %p\n", ptr);
+    get_Mod_ADDR(eid, &mod_ptr);
+    printf("Address of mod %p\n", mod_ptr);
 
     get_DIVR_ADDR(eid, &ptr);
     printf("Address of DIVR %p\n", ptr);
 
-    char sign_array[2] = "ec";
-    int return_v;
-    ECDSA_sign(eid, &sign_array, &return_v);
+    /* Faulting on MOD operation */
+    info("Faulting on add operation..");
+    print_pte_adrs(add_ptr);
+    info("Faulting on mod_overflow operation");
+    print_pte_adrs(mod_ptr);
+
 
     /* mprotect to provoke page faults during enclaved execution */
     info("revoking a access rights..");
@@ -91,6 +97,11 @@ int main( int argc, char **argv )
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
 
     info("all is well; exiting..");
+
+    char sign_array[2] = "ec";
+    int return_v;
+    ECDSA_sign(eid, &sign_array, &return_v);
+
 	return 0;
 }
 
