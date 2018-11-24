@@ -159,7 +159,7 @@ void* get_Mod_ADDR(void) {
 }
 
  /* DUP */
-unsigned long int ECDSA_sign(char* hashed_msg) {
+unsigned long int ECDSA_sign(unsigned long int hashed_msg) {
     char seperator[PAGE_SIZE];
     /*
     unsigned long int hashed_msg = hash(msg);

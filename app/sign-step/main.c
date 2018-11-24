@@ -55,15 +55,27 @@ void fault_handler(int signal)
         printf("Caught fault %d corresponding add operation.\n", signal);
         printf("Restoring add access rights and revoking access to mod_overflow\n");
         add_caught = true;
+	printf("add\n");
+	print_pte_adrs(add_ptr);
         ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
         ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
-    } else if (!mod_caught) {
+	printf("add_restored\n");
+	print_pte_adrs(add_ptr);
+    } else {
         printf("Caught fault %d corresponding mod_overflow operation.\n", signal);
+	printf("mod_ptr\n");
+	print_pte_adrs(mod_ptr);
+	
         printf("Restoring access rights\n");
         ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
         ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
         printf("mod not blocked anymore\n");
+	printf("mod_ptr\n");
+	print_pte_adrs(mod_ptr);
+	printf("add_ptr_mod\n");
+	print_pte_adrs(add_ptr);
     }
+    
     fault_fired++;
 }
 
@@ -110,7 +122,7 @@ int main( int argc, char **argv )
     print_pte_adrs(add_ptr);
     ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
     print_pte_adrs(add_ptr);
-
+    
     printf("Will fault on mod_overflow operation once add is called \n");
     print_pte_adrs(mod_ptr);
     // ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
@@ -123,7 +135,7 @@ int main( int argc, char **argv )
 
     char sign_array[2] = "ec";
     unsigned long int return_v;
-    unsigned long r = ECDSA_sign(eid, Q/2, &return_v);
+    unsigned long r = ECDSA_sign(eid, &Q, &return_v);
 
     // printf("ECDSA_r = %lu\n", return_v);
 
