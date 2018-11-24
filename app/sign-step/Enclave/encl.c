@@ -23,13 +23,13 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-unsigned long int Q = 93529;
+unsigned long int Q = 100003;
 unsigned long int x_pk = 46261;
 unsigned long int PAGE_SIZE = 4096*5;
 
 __attribute__((aligned(4096))) unsigned long int a;
 
-__attribute__((aligned(4096))) unsigned long int mod_indicator;
+__attribute__((aligned(4096))) unsigned long int divrem_indicator;
 
 __attribute__((aligned(4096))) unsigned long int add_indicator;
 
@@ -42,6 +42,7 @@ unsigned long int addInts(unsigned long int x, unsigned long int y) {
 }
 unsigned long int divrem(unsigned long int v, unsigned long int modulus) {
     char seperator[PAGE_SIZE];
+    divrem_indicator++;
     unsigned long int quotient = v / modulus;
     return v - (modulus * quotient);
 }
@@ -52,7 +53,6 @@ void* get_DIVR_ADDR(void) {
 // Vulnerable function
 unsigned long int mod(unsigned long int v, unsigned long int modulus) {
     char seperator[PAGE_SIZE];
-    mod_indicator++;
     if (v < modulus) {
         return v;
     } else {
@@ -142,7 +142,7 @@ void* get_Add_ADDR(void) {
 	return &add_indicator;
 }
 void* get_Mod_ADDR(void) {
-	return &mod_indicator;
+	return &divrem_indicator;
 }
 
 
@@ -160,8 +160,10 @@ unsigned long int ECDSA_sign(char* msg) {
     unsigned long int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
+    printf("modded msg %lu\n", modded_msg);
+    printf("rx is %lu\n", rx);
     unsigned long int sum = addInts(modded_msg, rx);
-    printf("Sum mod %d\n", sum);
+    printf("Sum mod %lu\n", sum);
     sum = mod(sum, Q);
     // if mod called div_rem, then we can establish ineq
     unsigned long int s = mul(k_inverse, sum);
