@@ -220,13 +220,13 @@ int mul2(int x, int y) {
 
 
 void* get_ECDSA_sign_ADDR(void) {
-	return &(void*) ECDSA_sign;
+	return (void*) ECDSA_sign;
 }
 void* get_Add_ADDR(void) {
-	return &(void*) add;
+	return (void*) addInts;
 }
 void* get_Mod_ADDR(void) {
-	return &(void*) mod;
+	return (void*) mod;
 }
 
 /* DUPLICATE */
@@ -401,7 +401,7 @@ void* get_ECDSA_sign_ADDR3(void) {
 	return (void*) ECDSA_sign;
 }
 void* get_Add_ADDR3(void) {
-	return (void*) add;
+	return (void*) addInts;
 }
 void* get_Mod_ADDR3(void) {
 	return (void*) mod;
