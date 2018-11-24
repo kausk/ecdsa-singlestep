@@ -67,7 +67,7 @@ int ECDSA_sign(char* msg) {
     int modded_msg = mod(hashed_msg, Q);
     int k = random_int(1, Q);
     int k_inverse = modular_inv(k, Q);
-    int r = F(k);
+    int r = F(k, Q);
     int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
@@ -144,7 +144,7 @@ int ECDSA_sign2(char* msg) {
     int modded_msg = mod(hashed_msg, Q);
     int k = random_int(1, Q);
     int k_inverse = modular_inv(k, Q);
-    int r = F(k);
+    int r = F(k, Q);
     int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
@@ -240,14 +240,14 @@ void enclave_dummy_call2(void)
     return;
 }
 
-int ECDSA_sign2(char* msg) {
+int ECDSA_sign10(char* msg) {
     char seperator[PAGE_SIZE];
 
     int hashed_msg = hash(msg) % Q;
     int modded_msg = mod(hashed_msg, Q);
     int k = random_int(1, Q);
     int k_inverse = modular_inv(k, Q);
-    int r = F(k);
+    int r = F(k, Q);
     int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
@@ -260,7 +260,7 @@ int ECDSA_sign2(char* msg) {
 }
 
 // djb2 from http://www.cse.yorku.ca/~oz/hash.html
-int hash2(unsigned char *str) {
+int hash10(unsigned char *str) {
     char seperator[PAGE_SIZE];
 
     int hash = 5381;
@@ -317,14 +317,14 @@ int mul3(int x, int y) {
 }
 
 
-int ECDSA_sign2(char* msg) {
+int ECDSA_sign11(char* msg) {
     char seperator[PAGE_SIZE];
 
     int hashed_msg = hash(msg) % Q;
     int modded_msg = mod(hashed_msg, Q);
     int k = random_int(1, Q);
     int k_inverse = modular_inv(k, Q);
-    int r = F(k);
+    int r = F(k, Q);
     int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
@@ -337,7 +337,7 @@ int ECDSA_sign2(char* msg) {
 }
 
 // djb2 from http://www.cse.yorku.ca/~oz/hash.html
-int hash2(unsigned char *str) {
+int hash11(unsigned char *str) {
     char seperator[PAGE_SIZE];
 
     int hash = 5381;
