@@ -27,7 +27,13 @@
 #include "libsgxstep/pt.h"
 
 void *a_pt;
+void* ptr;
+void* ec_ptr;
+void* add_ptr;
+void* mod_ptr;
 int fault_fired = 0, aep_fired = 0;
+
+bool add_caught = false;
 
 void aep_cb_func(void)
 {
@@ -39,7 +45,18 @@ void aep_cb_func(void)
 
 void fault_handler(int signal)
 {
-	printf("Caught fault %d! Restoring access rights..\n", signal);
+    if (!add_caught) {
+        printf("Caught fault %d corresponding add operation.\n", signal);
+        printf("Restoring add access rights and revoking access to mod_overflow\n");
+        add_caught = true;
+        ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
+        ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
+    } else {
+        printf("Caught fault %d corresponding mod_overflow operation.\n", signal);
+        printf("Restoring access rights\n");
+        ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
+    }
+	
     ASSERT(!mprotect(a_pt, 4096, PROT_READ | PROT_WRITE));
     print_pte_adrs(a_pt);
     fault_fired++;
@@ -59,10 +76,7 @@ int main( int argc, char **argv )
     register_enclave_info();
     print_enclave_info();
 
-    void* ptr;
-    void* ec_ptr;
-    void* add_ptr;
-    void* mod_ptr;
+
 
     get_ECDSA_sign_ADDR(eid, &ec_ptr);
     printf("Address of sign %p\n", ec_ptr);
@@ -82,16 +96,10 @@ int main( int argc, char **argv )
     ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
     print_pte_adrs(add_ptr);
 
-    printf("Faulting on mod_overflow operation\n");
+    printf("Will fault on mod_overflow operation once add is called \n");
     print_pte_adrs(mod_ptr);
-    ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
-    print_pte_adrs(mod_ptr);
+    // ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
 
-    printf("Faulting on ECDSA\n");
-    print_pte_adrs(ec_ptr);
-
-    printf("AEBFunc\n");
-    print_pte_adrs((void*) aep_cb_func);
 
     ASSERT(signal(SIGSEGV, fault_handler) != SIG_ERR);
 
