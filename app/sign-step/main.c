@@ -130,13 +130,12 @@ int main( int argc, char **argv )
 
     int i;
     unsigned long int return_v = NULL;
-    ofstream myfile; // http://www.cplusplus.com/doc/tutorial/files/
+    File* data; // http://www.cplusplus.com/doc/tutorial/files/
 
     time_t timer;
     timer = time(NULL);
     seconds = difftime(timer,mktime(&y2k));
-
-    myfile.open("MRQData%.f.txt", seconds); // http://www.cplusplus.com/reference/ctime/time/
+    data = fopen( ("MRQData%.f.txt", seconds), 'r+')
 
     for (i = 0; i < 1000; i++) {
         ECDSA_sign(eid, &return_v, message_by2);
@@ -149,13 +148,13 @@ int main( int argc, char **argv )
         printf("value of q = %lu\n", Q);
 
         if (greater_than_q) { // if trigger was called twice
-            myfile << ("%lu:%lu:%lu", message_by_2, return_v, Q); // M, R, Q
+            fputs( ("%lu:%lu:%lu\n", message_by_2, return_v, Q), data);
         }
 
         greater_than_q = false;
 
     }
-    myfile.close();
+    fclose(data);
 
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
