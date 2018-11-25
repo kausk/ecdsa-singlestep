@@ -27,8 +27,6 @@
 #include "libsgxstep/pt.h"
 #include <stdbool.h>
 #include <time.h>
-#include <iostream>
-#include <fstream>
 
 unsigned long int Q = 100003;
 
