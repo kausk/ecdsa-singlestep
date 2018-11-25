@@ -124,35 +124,31 @@ int main( int argc, char **argv )
 
     char sign_array[2] = "ec";
     unsigned long int message_by2 = Q / 2;
-
-
-    int i;
     unsigned long int return_v = NULL;
-    File* data; // http://www.cplusplus.com/doc/tutorial/files/
+    FILE* data; // http://www.cplusplus.com/doc/tutorial/files/
 
-    time_t timer;
-    timer = time(NULL);
-    seconds = difftime(timer,mktime(&y2k));
-    data = fopen( ("MRQData%.f.txt", seconds), 'r+')
+    time_t seconds = time(NULL)/3600;
+    
+    //data = fopen("MRQData.txt", 'a+');
+    int i;
+    for (i = 0; i < 1; i++) {
 
-    for (i = 0; i < 1000; i++) {
-        ECDSA_sign(eid, &return_v, message_by2);
-        printf("Faulting on add operation at %p\n", add_ptr);
-        print_pte_adrs(add_ptr);
         ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
-
+        ECDSA_sign(eid, &return_v, message_by2);        
         printf("value of m =q/2 =%lu\n", message_by2);
         printf("value of r =%lu\n", return_v);
         printf("value of q = %lu\n", Q);
 
         if (greater_than_q) { // if trigger was called twice
-            fputs( ("%lu:%lu:%lu\n", message_by_2, return_v, Q), data);
+	  printf(("%lu:%lu:%lu\n", message_by2, return_v, Q));
+	  //fputs( ("%lu:%lu:%lu\n", message_by2, return_v, Q), data);
         }
-
+        add_caught = false;
         greater_than_q = false;
+	printf("done\n");
 
     }
-    fclose(data);
+    //fclose(data);
 
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
