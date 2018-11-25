@@ -165,12 +165,13 @@ unsigned long int ECDSA_sign(unsigned long int hashed_msg) {
     unsigned long int hashed_msg = hash(msg);
     printf("hashed msg %d\n", hashed_msg >> (unsigned_size-outlen));
     */
+    printf("message: %lu\n", hashed_msg);
     unsigned long int modded_msg = mod(hashed_msg, Q);
     unsigned long int k = random_int(1, Q);
     printf("Random int k %lu\n", k);
     unsigned long int k_inverse = modular_inv(k, Q);
     unsigned long int r = F(k, Q);
-    printf("Hash fn F(k, Q) = %lu\n", r);
+    printf("Hash fn r = F(k, Q) = %lu\n", r);
     unsigned long int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel

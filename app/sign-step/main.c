@@ -106,6 +106,7 @@ int main( int argc, char **argv )
     register_enclave_info();
     print_enclave_info();
 
+    
     get_Add_ADDR(eid, &add_ptr);
     printf("Address of add %p\n", add_ptr);
 
@@ -117,16 +118,16 @@ int main( int argc, char **argv )
 
     ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
     ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
-
+    
     printf("Faulting on add operation at %p\n", add_ptr);
-    print_pte_adrs(add_ptr);
+    // print_pte_adrs(add_ptr);
     ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
     print_pte_adrs(add_ptr);
     
     printf("Will fault on mod_overflow operation once add is called \n");
     print_pte_adrs(mod_ptr);
     // ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
-
+    
     ASSERT(signal(SIGSEGV, fault_handler) != SIG_ERR);
 
     /* mprotect to provoke page faults during enclaved execution */
@@ -134,11 +135,14 @@ int main( int argc, char **argv )
     printf("calling enclave..");
 
     char sign_array[2] = "ec";
+    unsigned long int message_by2 = Q / 2;
     unsigned long int return_v;
-    unsigned long r = ECDSA_sign(eid, &Q, &return_v);
+    unsigned long r = ECDSA_sign(eid, &return_v, message_by2);
 
-    // printf("ECDSA_r = %lu\n", return_v);
-
+    
+    printf("value of m =q/2 =%lu\n", message_by2);
+    // printf("value of r =%lu", return_v);
+    printf("value of q = %lu\n", Q);
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
 
