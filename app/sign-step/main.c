@@ -129,6 +129,7 @@ int main( int argc, char **argv )
 
     time_t seconds = time(NULL)/3600;
     
+<<<<<<< HEAD
     //data = fopen("MRQData.txt", 'a+');
     int i;
     for (i = 0; i < 1; i++) {
@@ -150,6 +151,11 @@ int main( int argc, char **argv )
     }
     //fclose(data);
 
+=======
+    printf("value of m =q/2 =%lu\n", message_by2);
+    // printf("value of r =%lu", return_v);
+    printf("value of q = %lu\n", Q);
+>>>>>>> parent of db4b76e... changed type
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
 
