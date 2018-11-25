@@ -74,6 +74,7 @@ void fault_handler(int signal)
 	print_pte_adrs(mod_ptr);
 	printf("add_ptr_mod\n");
 	print_pte_adrs(add_ptr);
+	mod_caught = true;
     }
     
     fault_fired++;
@@ -139,6 +140,10 @@ int main( int argc, char **argv )
     unsigned long int return_v;
     unsigned long r = ECDSA_sign(eid, &return_v, message_by2);
 
+
+    if (mod_caught) {
+      printf("DATA%lu:%lu:%lu\n", message_by2, return_v, Q);
+    }
     
     printf("value of m =q/2 =%lu\n", message_by2);
     printf("value of r =%lu\n", return_v);
@@ -148,6 +153,7 @@ int main( int argc, char **argv )
 
     printf("all is well; exiting..\n");
 
+    
 
 
 	return 0;
