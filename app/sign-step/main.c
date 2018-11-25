@@ -141,7 +141,7 @@ int main( int argc, char **argv )
 
     
     printf("value of m =q/2 =%lu\n", message_by2);
-    // printf("value of r =%lu", return_v);
+    printf("value of r =%lu\n", return_v);
     printf("value of q = %lu\n", Q);
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
