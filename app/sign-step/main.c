@@ -28,7 +28,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-unsigned long int Q = 100003;
+unsigned long int Q = 999434999;
 
 
 void *a_pt;

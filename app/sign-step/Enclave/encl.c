@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-unsigned long int Q = 100003;
-unsigned long int x_pk = 44453;
+unsigned long int Q = 999434999;
+unsigned long int x_pk = 100030001;
 unsigned long int PAGE_SIZE = 4096*5;
 int unsigned_size = 32;
 int outlen = 5;
