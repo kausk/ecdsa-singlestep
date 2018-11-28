@@ -103,7 +103,7 @@ unsigned int hash(unsigned char *s)
 
   for (hashval = 0; *s != '\0'; s++)
     hashval = *s + 31*hashval;
-  return hashval % 65535;
+  return hashval % 9943999;
 }
 
 /*
