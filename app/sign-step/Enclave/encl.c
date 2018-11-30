@@ -23,8 +23,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-unsigned long int Q = 999434999;
-unsigned long int x_pk = 100030001;
+unsigned long long int Q = 9448415652190247659;
+unsigned long long int x_pk = 5295914700624514493;
 unsigned long int PAGE_SIZE = 4096*5;
 int unsigned_size = 32;
 int outlen = 5;
@@ -58,7 +58,7 @@ unsigned long int mod(unsigned long int v, unsigned long int modulus) {
     if (v < modulus) {
         return v;
     } else {
-        unsigned long int remainder = divrem(v, modulus);
+        unsigned long long int remainder = divrem(v, modulus);
         return remainder; 
     }
 }
@@ -159,23 +159,23 @@ void* get_Mod_ADDR(void) {
 }
 
  /* DUP */
-unsigned long int ECDSA_sign(unsigned long int hashed_msg) {
+unsigned long long int ECDSA_sign(unsigned long int hashed_msg) {
     char seperator[PAGE_SIZE];
     /*
     unsigned long int hashed_msg = hash(msg);
     printf("hashed msg %d\n", hashed_msg >> (unsigned_size-outlen));
     */
     printf("message: %lu\n", hashed_msg);
-    unsigned long int modded_msg = mod(hashed_msg, Q);
-    unsigned long int k = random_int(1, Q);
+    unsigned long long int modded_msg = mod(hashed_msg, Q);
+    unsigned long long int k = random_int(1, Q);
     printf("Random int k %lu\n", k);
-    unsigned long int k_inverse = modular_inv(k, Q);
-    unsigned long int r = F(k, Q);
+    unsigned long long int k_inverse = modular_inv(k, Q);
+    unsigned long long int r = F(k, Q);
     printf("Hash fn r = F(k, Q) = %lu\n", r);
-    unsigned long int rx = mul(r, x_pk);
+    unsigned long long int rx = mul(r, x_pk);
     rx = mod(rx, Q);
     // start of side channel
-    unsigned long int sum = addInts(modded_msg, rx);
+    unsigned long long int sum = addInts(modded_msg, rx);
     sum = mod(sum, Q);
     // if mod called div_rem, then we can establish ineq
     return r;

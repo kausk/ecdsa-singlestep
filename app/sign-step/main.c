@@ -28,7 +28,7 @@
 #include <stdbool.h>
 #include <time.h>
 
-unsigned long int Q = 999434999;
+unsigned long long int Q = 9448415652190247659;
 
 
 void *a_pt;
@@ -136,9 +136,9 @@ int main( int argc, char **argv )
     printf("calling enclave..");
 
     char sign_array[2] = "ec";
-    unsigned long int message_by2 = Q / 2;
-    unsigned long int return_v;
-    unsigned long r = ECDSA_sign(eid, &return_v, message_by2);
+    unsigned long long int message_by2 = Q / 2;
+    unsigned long long int return_v;
+    ECDSA_sign(eid, &return_v, message_by2);
 
 
     if (mod_caught) {
